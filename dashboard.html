@@ -195,6 +195,16 @@ tbody tr.sel{background:rgba(79,163,224,.06)}
 /* Toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;z-index:200;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.confirm-modal{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:100000;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(8px)}
+.confirm-modal.show{display:flex}
+.confirm-box{width:min(380px,100%);background:var(--bg2);border:1px solid var(--border2);border-radius:10px;box-shadow:0 24px 80px rgba(0,0,0,.45);padding:16px;animation:fadeUp .2s ease both}
+.confirm-title{font-size:15px;font-weight:800;margin-bottom:5px}
+.confirm-detail{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px}
+.confirm-actions{display:flex;gap:8px;justify-content:flex-end}
+.confirm-btn{height:34px;padding:0 13px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.confirm-btn:hover{background:var(--bg4);color:var(--text);transform:translateY(-1px)}
+.confirm-btn.danger{background:var(--red-bg);border-color:rgba(248,113,113,.32);color:var(--red)}
+.confirm-btn.danger:hover{background:rgba(248,113,113,.2)}
 
 /* Perf page */
 .perf-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -7018,7 +7028,7 @@ let DATA = [
 "cat": "build",
 "dept": "ส่วนควบคุมการก่อสร้างอาคารและผังเมือง",
 "fai": "ฝ่ายงานควบคุมอาคารและผังเมือง",
-"zone": "อาคารเขต 7",
+"zone": "ไม่ระบุ",
 "comm": "ไม่ระบุ",
 "date": "10/02/2569",
 "done": "28/03/2569",
@@ -7398,19 +7408,55 @@ function applyFilters() {
 }
 function sortTable(col) { sortCol = col; sortAsc = !sortAsc; currentPage = 1; renderTable(); }
 
+function showConfirmDialog(message, onConfirm, detail) {
+  let modal = document.getElementById('confirm-modal');
+  if (!modal) {
+    document.body.insertAdjacentHTML('beforeend',
+      '<div class="confirm-modal" id="confirm-modal">' +
+        '<div class="confirm-box">' +
+          '<div class="confirm-title" id="confirm-title"></div>' +
+          '<div class="confirm-detail" id="confirm-detail"></div>' +
+          '<div class="confirm-actions">' +
+            '<button class="confirm-btn" type="button" id="confirm-cancel">ยกเลิก</button>' +
+            '<button class="confirm-btn danger" type="button" id="confirm-ok">ยืนยัน</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>');
+    modal = document.getElementById('confirm-modal');
+  }
+  document.getElementById('confirm-title').textContent = message;
+  document.getElementById('confirm-detail').textContent = detail || 'การดำเนินการนี้มีผลต่อข้อมูลที่จัดเก็บในระบบ';
+  modal.classList.add('show');
+  const cancel = document.getElementById('confirm-cancel');
+  const ok = document.getElementById('confirm-ok');
+  const close = () => {
+    modal.classList.remove('show');
+    cancel.onclick = null;
+    ok.onclick = null;
+    modal.onclick = null;
+  };
+  cancel.onclick = close;
+  modal.onclick = event => { if (event.target === modal) close(); };
+  ok.onclick = () => {
+    close();
+    if (typeof onConfirm === 'function') onConfirm();
+  };
+}
+
 function deleteComplaint(event,id) {
   event.stopPropagation();
-  if(!confirm('ลบคำร้องเลขที่ '+id+' ?'))return;
-  DATA=DATA.filter(item=>item.id!==id);
-  markTicketDeleted(id);
-  removeSharedTicket(id);
-  publishDashboardTickets();
-  closePanel();
-  const totalPages=Math.max(1,Math.ceil(DATA.length/PAGE_SIZE));
-  if(currentPage>totalPages)currentPage=totalPages;
-  renderTable(currentPage);
-  refreshAnalytics();
-  toast('ลบคำร้อง '+id+' แล้ว');
+  showConfirmDialog('ยืนยันการลบคำร้องเลขที่ '+id, function(){
+    DATA=DATA.filter(item=>item.id!==id);
+    markTicketDeleted(id);
+    removeSharedTicket(id);
+    publishDashboardTickets();
+    closePanel();
+    const totalPages=Math.max(1,Math.ceil(DATA.length/PAGE_SIZE));
+    if(currentPage>totalPages)currentPage=totalPages;
+    renderTable(currentPage);
+    refreshAnalytics();
+    toast('ลบคำร้อง '+id+' แล้ว');
+  }, 'คำร้องนี้จะถูกนำออกจากตารางและข้อมูลที่เชื่อมต่อกับแดชบอร์ด');
 }
 
 // ─── PANEL ───
@@ -7930,40 +7976,48 @@ document.addEventListener('DOMContentLoaded',function(){
     '.kc-auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;padding:4px;background:var(--kc-auth-soft);border-radius:10px}.kc-auth-tab{height:39px;border:1px solid transparent;background:transparent;color:var(--text2,#718177);border-radius:8px;font:inherit;font-weight:900;cursor:pointer;transition:transform .16s ease,background .16s ease,color .16s ease,box-shadow .16s ease}.kc-auth-tab:hover{transform:translateY(-1px);background:var(--kc-auth-hover);color:var(--text,#16342c)}.kc-auth-tab.active{background:var(--kc-auth-accent);color:#fff;border-color:transparent;box-shadow:0 8px 18px var(--kc-auth-soft)}',
     '.kc-auth-form{display:none}.kc-auth-form.active{display:block;animation:kcFormIn .18s ease both}@keyframes kcFormIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}.kc-auth-field{display:flex;flex-direction:column;gap:6px;margin-bottom:11px;font-size:12px;font-weight:900}.kc-auth-field input{height:43px;border:1px solid var(--border,#dde8e1);border-radius:9px;padding:0 12px;background:var(--kc-auth-field);color:var(--text,#16342c);font:inherit;outline:none;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease,background .16s ease}.kc-auth-field input:hover{transform:translateY(-1px);border-color:var(--kc-auth-accent);background:var(--kc-auth-field)}.kc-auth-field input:focus{border-color:var(--kc-auth-accent);box-shadow:0 0 0 3px var(--kc-auth-soft)}',
     '.kc-auth-submit{width:100%;height:44px;border:0;border-radius:9px;background:var(--kc-auth-accent);color:#fff;font:inherit;font-weight:900;cursor:pointer;margin-top:6px;box-shadow:0 12px 24px var(--kc-auth-soft);transition:transform .16s ease,filter .16s ease,box-shadow .16s ease,background .16s ease}.kc-auth-submit:hover{filter:brightness(1.05);transform:translateY(-2px);box-shadow:0 16px 30px var(--kc-auth-soft);background:var(--kc-auth-accent-2)}.kc-auth-submit:active{transform:translateY(0) scale(.99)}',
-    '.kc-auth-error{display:none;margin:0 0 11px;padding:10px 11px;border-radius:9px;background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.28);font-size:12px;font-weight:800;line-height:1.55}.kc-auth-error.show{display:block;animation:kcErrorIn .18s ease both}@keyframes kcErrorIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}',
+    '.kc-auth-error{display:none;margin:0 0 11px;padding:10px 11px;border-radius:9px;background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.28);font-size:12px;font-weight:800;line-height:1.55}.kc-auth-error.ok{background:rgba(52,211,153,.12);color:var(--green,#34d399);border-color:rgba(52,211,153,.32)}.kc-auth-error.show{display:block;animation:kcErrorIn .18s ease both}@keyframes kcErrorIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}',
     '.kc-profile-box{position:relative;display:flex;align-items:center;gap:9px;width:100%;padding:8px;border-radius:8px;cursor:pointer;font-family:var(--font,Sarabun,sans-serif);transition:background .16s ease,transform .16s ease,box-shadow .16s ease}.kc-profile-box:hover{background:var(--kc-auth-hover,rgba(127,147,172,.12));transform:translateY(-1px)}.kc-profile-box.float{position:fixed;top:12px;right:12px;z-index:60;width:auto;min-width:190px;background:var(--bg2,#fff);border:1px solid var(--border,#dde8e1);box-shadow:0 12px 30px rgba(0,0,0,.16)}.kc-profile-box.float:hover{box-shadow:0 16px 34px rgba(0,0,0,.22)}',
     '.kc-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--kc-auth-accent,var(--green,#06C755));color:#fff;font-size:12px;font-weight:900;flex-shrink:0;transition:transform .16s ease}.kc-profile-box:hover .kc-avatar{transform:scale(1.05)}.kc-profile-name{font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}.kc-profile-email{font-size:10px;color:var(--text2,#718177);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}',
-    '.kc-profile-menu{display:none;position:absolute;left:8px;right:8px;bottom:calc(100% + 8px);background:var(--bg2,#fff);color:var(--text,#16342c);border:1px solid var(--border,#dde8e1);border-radius:9px;padding:11px;box-shadow:0 16px 38px rgba(0,0,0,.24);min-width:210px}.kc-profile-box.float .kc-profile-menu{left:auto;right:0;bottom:auto;top:calc(100% + 8px)}.kc-profile-box.open .kc-profile-menu{display:block;animation:kcMenuIn .16s ease both}@keyframes kcMenuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}',
-    '.kc-logout-btn{width:100%;margin-top:9px;height:36px;border-radius:7px;border:1px solid rgba(248,113,113,.32);background:rgba(248,113,113,.1);color:#f87171;font:inherit;font-size:12px;font-weight:900;cursor:pointer;transition:background .16s ease,transform .16s ease}.kc-logout-btn:hover{background:rgba(248,113,113,.18);transform:translateY(-1px)}'
+    '.kc-profile-menu{display:none;position:absolute;left:0;right:0;bottom:calc(100% + 8px);background:var(--bg2,#fff);color:var(--text,#16342c);border:1px solid var(--border,#dde8e1);border-radius:9px;padding:11px;box-shadow:0 16px 38px rgba(0,0,0,.24);min-width:0;max-width:100%;box-sizing:border-box;overflow:hidden}.kc-profile-menu .kc-profile-name,.kc-profile-menu .kc-profile-email{max-width:100%}.kc-profile-box.float .kc-profile-menu{left:auto;right:0;bottom:auto;top:calc(100% + 8px);width:min(230px,calc(100vw - 24px));max-width:calc(100vw - 24px)}.kc-profile-box.open .kc-profile-menu{display:block;animation:kcMenuIn .16s ease both}@keyframes kcMenuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}',
+    '.kc-menu-action{width:100%;box-sizing:border-box;margin-top:9px;height:36px;border-radius:7px;border:1px solid var(--border,#dde8e1);background:var(--bg3,#192030);color:var(--text,#dce8f5);font:inherit;font-size:12px;font-weight:900;cursor:pointer;transition:background .16s ease,transform .16s ease,border-color .16s ease}.kc-menu-action:hover{background:var(--bg4,#1e2a3a);border-color:var(--border2,rgba(255,255,255,.13));transform:translateY(-1px)}',
+    '.kc-logout-btn{width:100%;box-sizing:border-box;margin-top:7px;height:36px;border-radius:7px;border:1px solid rgba(248,113,113,.32);background:rgba(248,113,113,.1);color:#f87171;font:inherit;font-size:12px;font-weight:900;cursor:pointer;transition:background .16s ease,transform .16s ease}.kc-logout-btn:hover{background:rgba(248,113,113,.18);transform:translateY(-1px)}',
+    '.kc-account-modal{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.58);backdrop-filter:blur(8px);padding:18px}.kc-account-modal.show{display:flex}.kc-account-panel{width:min(860px,100%);max-height:min(760px,calc(100vh - 36px));overflow:hidden;background:var(--bg2,#111820);border:1px solid var(--border2,rgba(255,255,255,.13));border-radius:10px;box-shadow:0 26px 90px rgba(0,0,0,.42);animation:kcAccountIn .22s ease both}@keyframes kcAccountIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}.kc-account-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--border,#263241)}.kc-account-title{font-size:16px;font-weight:900}.kc-account-sub{font-size:12px;color:var(--text2,#7a93ac);margin-top:2px}.kc-account-close{width:34px;height:34px;border-radius:7px;border:1px solid var(--border,#263241);background:var(--bg3,#192030);color:var(--text2,#7a93ac);cursor:pointer;font-weight:900;transition:all .16s ease}.kc-account-close:hover{background:var(--bg4,#1e2a3a);color:var(--text,#dce8f5);transform:translateY(-1px)}.kc-account-body{padding:14px 18px 18px;overflow:auto;max-height:calc(min(760px,100vh - 36px) - 67px)}.kc-account-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}.kc-account-stat{background:var(--bg3,#192030);border:1px solid var(--border,#263241);border-radius:8px;padding:11px 12px}.kc-account-stat span{display:block;font-size:11px;color:var(--text2,#7a93ac);font-weight:800}.kc-account-stat strong{display:block;margin-top:3px;font-family:var(--mono,monospace);font-size:22px}.kc-account-section{margin-top:12px}.kc-account-section:first-child{margin-top:0}.kc-account-section-title{font-size:12px;font-weight:900;color:var(--blue,#4fa3e0);margin-bottom:8px}.kc-account-empty{border:1px dashed var(--border2,rgba(255,255,255,.13));border-radius:8px;padding:14px;text-align:center;color:var(--text2,#7a93ac);font-size:12px}.kc-account-row{display:grid;grid-template-columns:38px minmax(0,1fr) minmax(160px,.8fr) 108px;gap:10px;align-items:center;background:var(--bg3,#192030);border:1px solid var(--border,#263241);border-radius:8px;padding:10px;margin-bottom:8px;transition:background .16s ease,border-color .16s ease,transform .16s ease}.kc-account-row:hover{background:var(--bg4,#1e2a3a);border-color:var(--border2,rgba(255,255,255,.13));transform:translateY(-1px)}.kc-account-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--blue2,#1a6db5);color:#fff;font-size:12px;font-weight:900}.kc-account-name{font-size:13px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kc-account-email,.kc-account-date{font-size:11px;color:var(--text2,#7a93ac);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kc-account-delete{height:32px;border-radius:7px;border:1px solid rgba(248,113,113,.32);background:rgba(248,113,113,.1);color:#f87171;font:inherit;font-size:12px;font-weight:900;cursor:pointer;transition:background .16s ease,transform .16s ease}.kc-account-delete:hover{background:rgba(248,113,113,.2);transform:translateY(-1px)}@media(max-width:720px){.kc-account-stats{grid-template-columns:1fr}.kc-account-row{grid-template-columns:34px minmax(0,1fr);}.kc-account-date{display:none}.kc-account-delete{grid-column:1/-1}}'
   ].join('');
   document.head.insertAdjacentHTML('beforeend', '<style>'+css+'</style>');
 
   document.body.insertAdjacentHTML('beforeend',
     '<div class="kc-auth-screen '+role+'" id="kc-auth-screen"><div class="kc-auth-card" id="kc-auth-card">'+
     '<h2 class="kc-auth-title">KaenConnect</h2>'+
-    '<p class="kc-auth-sub">'+(role === 'staff' ? 'เข้าสู่ระบบสำหรับเจ้าหน้าที่ Dashboard' : 'เข้าสู่ระบบสำหรับผู้ยื่นคำร้อง')+'</p>'+
-    '<div class="kc-auth-tabs"><button type="button" class="kc-auth-tab active" data-auth-tab="login">Login</button><button type="button" class="kc-auth-tab" data-auth-tab="register">ลงทะเบียน</button></div>'+
+    '<p class="kc-auth-sub">'+(role === 'staff' ? 'เข้าสู่ระบบสำหรับเจ้าหน้าที่ศูนย์ควบคุมคำร้องเรียน' : 'เข้าสู่ระบบสำหรับผู้ยื่นคำร้อง')+'</p>'+
+    '<div class="kc-auth-tabs"><button type="button" class="kc-auth-tab active" data-auth-tab="login">เข้าสู่ระบบ</button><button type="button" class="kc-auth-tab" data-auth-tab="register">ลงทะเบียน</button></div>'+
     '<div class="kc-auth-error" id="kc-auth-error"></div>'+
-    '<form class="kc-auth-form active" id="kc-login-form"><label class="kc-auth-field">Username<input name="username" autocomplete="username" required></label><label class="kc-auth-field">Password<input name="password" type="password" autocomplete="current-password" required></label><button class="kc-auth-submit">Login</button></form>'+
-    '<form class="kc-auth-form" id="kc-register-form"><label class="kc-auth-field">อีเมล<input name="email" type="email" autocomplete="email" required></label><label class="kc-auth-field">Username<input name="username" autocomplete="username" required></label><label class="kc-auth-field">Password<input name="password" type="password" autocomplete="new-password" minlength="4" required></label><button class="kc-auth-submit">ลงทะเบียนและเข้าสู่ระบบ</button></form>'+
+    '<form class="kc-auth-form active" id="kc-login-form"><label class="kc-auth-field">ชื่อผู้ใช้<input name="username" autocomplete="username" required></label><label class="kc-auth-field">รหัสผ่าน<input name="password" type="password" autocomplete="current-password" required></label><button class="kc-auth-submit">เข้าสู่ระบบ</button></form>'+
+    '<form class="kc-auth-form" id="kc-register-form"><label class="kc-auth-field">อีเมล<input name="email" type="email" autocomplete="email" required></label><label class="kc-auth-field">ชื่อผู้ใช้<input name="username" autocomplete="username" required></label><label class="kc-auth-field">รหัสผ่าน<input name="password" type="password" autocomplete="new-password" minlength="4" required></label><button class="kc-auth-submit">ยืนยันการลงทะเบียน</button></form>'+
     '</div></div>');
 
   function showError(message){
     const el=document.getElementById('kc-auth-error');
     const messages=Array.isArray(message)?message:[message];
+    el.classList.remove('ok');
     el.innerHTML=messages.map(escapeAuthHtml).join('<br>');
     el.classList.add('show');
     const card=document.getElementById('kc-auth-card');
     if(card){ card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
   }
-  function clearError(){ const el=document.getElementById('kc-auth-error'); el.textContent=''; el.classList.remove('show'); }
-  function authAreaName(){ return role === 'staff' ? 'Dashboard' : 'หน้าคำร้อง'; }
+  function showNotice(message){
+    const el=document.getElementById('kc-auth-error');
+    el.innerHTML=escapeAuthHtml(message);
+    el.classList.add('ok','show');
+  }
+  function clearError(){ const el=document.getElementById('kc-auth-error'); el.textContent=''; el.classList.remove('show','ok'); }
+  function authAreaName(){ return role === 'staff' ? 'ศูนย์ควบคุมคำร้องเรียน' : 'ระบบยื่นคำร้องเรียน'; }
   function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
   function passwordErrors(password){
     const errors=[];
-    if(!password)errors.push('กรุณากรอก Password');
-    if(password&&password.length<4)errors.push('Password ต้องมีอย่างน้อย 4 ตัวอักษร');
-    if(/\s/.test(password))errors.push('Password ห้ามมีช่องว่าง');
+    if(!password)errors.push('กรุณากรอกรหัสผ่าน');
+    if(password&&password.length<4)errors.push('รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร');
+    if(/\s/.test(password))errors.push('รหัสผ่านห้ามมีช่องว่าง');
     return errors;
   }
   function setAuthMode(mode){
@@ -7971,6 +8025,111 @@ document.addEventListener('DOMContentLoaded',function(){
     document.querySelectorAll('.kc-auth-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.authTab === mode));
     document.getElementById('kc-login-form').classList.toggle('active', mode === 'login');
     document.getElementById('kc-register-form').classList.toggle('active', mode === 'register');
+  }
+  const ACCOUNT_ROLE_CONFIG = {
+    citizen: {
+      label: 'บัญชีผู้ยื่นคำร้องเรียน',
+      key: 'kc_registered_users_citizen_v1',
+      sessionKey: 'kc_session_citizen_v1'
+    },
+    staff: {
+      label: 'บัญชีเจ้าหน้าที่ศูนย์ควบคุมคำร้องเรียน',
+      key: 'kc_registered_users_staff_v1',
+      sessionKey: 'kc_session_staff_v1'
+    }
+  };
+  function readAccountUsers(accountRole){
+    const config = ACCOUNT_ROLE_CONFIG[accountRole];
+    if (!config) return {};
+    const users = safeJson(localStorage.getItem(config.key), {});
+    const migrated = {};
+    let changed = false;
+    Object.entries(users).forEach(([key, user]) => {
+      if (!user || !user.username) return;
+      const usernameKey = String(user.username).trim().toLowerCase();
+      migrated[usernameKey] = user;
+      if (key !== usernameKey) changed = true;
+    });
+    if (changed) localStorage.setItem(config.key, JSON.stringify(migrated));
+    return changed ? migrated : users;
+  }
+  function writeAccountUsers(accountRole, users){
+    const config = ACCOUNT_ROLE_CONFIG[accountRole];
+    if (config) localStorage.setItem(config.key, JSON.stringify(users));
+  }
+  function formatAccountDate(value){
+    if (!value) return 'ไม่ระบุ';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'ไม่ระบุ';
+    return date.toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  function accountRows(accountRole){
+    const config = ACCOUNT_ROLE_CONFIG[accountRole];
+    const users = readAccountUsers(accountRole);
+    const entries = Object.entries(users).sort((a, b) => String(a[1].username || '').localeCompare(String(b[1].username || ''), 'th'));
+    if (!entries.length) {
+      return '<div class="kc-account-section"><div class="kc-account-section-title">'+config.label+'</div><div class="kc-account-empty">ยังไม่มีบัญชีในกลุ่มนี้</div></div>';
+    }
+    return '<div class="kc-account-section"><div class="kc-account-section-title">'+config.label+'</div>' + entries.map(([usernameKey, user]) => {
+      const userName = escapeAuthHtml(user.username || usernameKey);
+      const email = escapeAuthHtml(user.email || 'ไม่ระบุอีเมล');
+      const createdAt = escapeAuthHtml(formatAccountDate(user.createdAt));
+      return '<div class="kc-account-row">' +
+        '<div class="kc-account-avatar">'+escapeAuthHtml(initials(user.username || usernameKey))+'</div>' +
+        '<div><div class="kc-account-name">'+userName+'</div><div class="kc-account-email">'+email+'</div></div>' +
+        '<div class="kc-account-date">ลงทะเบียน '+createdAt+'</div>' +
+        '<button class="kc-account-delete" type="button" data-kc-delete-account data-role="'+accountRole+'" data-user="'+escapeAuthHtml(usernameKey)+'">ลบบัญชี</button>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+  function renderAccountCenter(){
+    const citizenCount = Object.keys(readAccountUsers('citizen')).length;
+    const staffCount = Object.keys(readAccountUsers('staff')).length;
+    return '<div class="kc-account-modal show" id="kc-account-modal">' +
+      '<div class="kc-account-panel">' +
+        '<div class="kc-account-hd">' +
+          '<div><div class="kc-account-title">ศูนย์บัญชี</div><div class="kc-account-sub">ตรวจสอบและจัดการบัญชีผู้ยื่นคำร้องเรียนและเจ้าหน้าที่</div></div>' +
+          '<button class="kc-account-close" type="button" data-kc-account-close>ปิด</button>' +
+        '</div>' +
+        '<div class="kc-account-body">' +
+          '<div class="kc-account-stats">' +
+            '<div class="kc-account-stat"><span>บัญชีผู้ยื่นคำร้องเรียน</span><strong>'+citizenCount+'</strong></div>' +
+            '<div class="kc-account-stat"><span>บัญชีเจ้าหน้าที่</span><strong>'+staffCount+'</strong></div>' +
+          '</div>' +
+          accountRows('citizen') +
+          accountRows('staff') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  function openAccountCenter(){
+    document.getElementById('kc-account-modal')?.remove();
+    document.body.insertAdjacentHTML('beforeend', renderAccountCenter());
+  }
+  function closeAccountCenter(){
+    document.getElementById('kc-account-modal')?.remove();
+  }
+  function deleteAccount(accountRole, usernameKey){
+    const config = ACCOUNT_ROLE_CONFIG[accountRole];
+    const users = readAccountUsers(accountRole);
+    const user = users[usernameKey];
+    if (!user) return;
+    window.showConfirmDialog('ยืนยันการลบบัญชี "'+(user.username || usernameKey)+'"', function(){
+      delete users[usernameKey];
+      writeAccountUsers(accountRole, users);
+      const accountSession = safeJson(localStorage.getItem(config.sessionKey), null);
+      const deletedSession = accountSession && String(accountSession.username || '').trim().toLowerCase() === usernameKey;
+      if (deletedSession) localStorage.removeItem(config.sessionKey);
+      const deletedCurrentUser = accountRole === role && deletedSession;
+      if (deletedCurrentUser) {
+        clearSession();
+        closeAccountCenter();
+        renderProfile();
+        setAuthMode('login');
+        return;
+      }
+      openAccountCenter();
+    }, 'บัญชีนี้จะไม่สามารถเข้าสู่ระบบได้อีกจนกว่าจะลงทะเบียนใหม่');
   }
   function renderProfile(){
     const session = getSession();
@@ -7985,15 +8144,21 @@ document.addEventListener('DOMContentLoaded',function(){
     if (!profile) { profile = document.createElement('div'); profile.id = 'kc-profile-box'; host.appendChild(profile); }
     const nameText = escapeAuthHtml(session.username);
     const emailText = escapeAuthHtml(session.email);
-    const roleText = role === 'staff' ? 'เจ้าหน้าที่ระบบ' : 'ผู้ยื่นคำร้อง';
+    const roleText = role === 'staff' ? 'เจ้าหน้าที่ศูนย์ควบคุมคำร้องเรียน' : 'ผู้ยื่นคำร้องเรียน';
     profile.className = 'kc-profile-box' + (floating ? ' float' : '');
-    profile.innerHTML = '<div class="kc-avatar">'+escapeAuthHtml(initials(session.username))+'</div><div style="flex:1;min-width:0"><div class="kc-profile-name">'+nameText+'</div><div class="kc-profile-email">'+emailText+'</div></div><div class="kc-profile-menu"><div class="kc-profile-name">'+nameText+'</div><div class="kc-profile-email">'+emailText+'</div><div class="kc-profile-email" style="margin-top:3px">'+roleText+'</div><button class="kc-logout-btn" data-kc-logout>Logout</button></div>';
+    profile.innerHTML = '<div class="kc-avatar">'+escapeAuthHtml(initials(session.username))+'</div><div style="flex:1;min-width:0"><div class="kc-profile-name">'+nameText+'</div><div class="kc-profile-email">'+emailText+'</div></div><div class="kc-profile-menu"><div class="kc-profile-name">'+nameText+'</div><div class="kc-profile-email">'+emailText+'</div><div class="kc-profile-email" style="margin-top:3px">'+roleText+'</div><button class="kc-menu-action" type="button" data-kc-account-center>ศูนย์บัญชี</button><button class="kc-logout-btn" type="button" data-kc-logout>ออกจากระบบ</button></div>';
   }
   document.addEventListener('click', function(e){
     const tab = e.target.closest('[data-auth-tab]');
     if (tab) { setAuthMode(tab.dataset.authTab); return; }
+    const accountCenter = e.target.closest('[data-kc-account-center]');
+    if (accountCenter) { e.preventDefault(); document.getElementById('kc-profile-box')?.classList.remove('open'); openAccountCenter(); return; }
+    const accountClose = e.target.closest('[data-kc-account-close]');
+    if (accountClose || e.target.id === 'kc-account-modal') { closeAccountCenter(); return; }
+    const deleteBtn = e.target.closest('[data-kc-delete-account]');
+    if (deleteBtn) { deleteAccount(deleteBtn.dataset.role, deleteBtn.dataset.user); return; }
     const logout = e.target.closest('[data-kc-logout]');
-    if (logout) { clearSession(); renderProfile(); setAuthMode('login'); return; }
+    if (logout) { closeAccountCenter(); clearSession(); renderProfile(); setAuthMode('login'); return; }
     const profile = e.target.closest('#kc-profile-box');
     if (profile) { profile.classList.toggle('open'); return; }
     document.getElementById('kc-profile-box')?.classList.remove('open');
@@ -8007,17 +8172,17 @@ document.addEventListener('DOMContentLoaded',function(){
     const errors=[];
     if(!email)errors.push('กรุณากรอกอีเมล');
     else if(!isValidEmail(email))errors.push('รูปแบบอีเมลไม่ถูกต้อง เช่น name@example.com');
-    if(!username)errors.push('กรุณากรอก Username');
-    else if(username.length<2)errors.push('Username ต้องมีอย่างน้อย 2 ตัวอักษร');
+    if(!username)errors.push('กรุณากรอกชื่อผู้ใช้');
+    else if(username.length<2)errors.push('ชื่อผู้ใช้ต้องมีอย่างน้อย 2 ตัวอักษร');
     errors.push(...passwordErrors(password));
     if(errors.length){ showError(errors); return; }
     const users = getUsers();
     const usernameKey = username.toLowerCase();
     const emailUsed = Object.values(users).some(user => user.email === email);
-    if (users[usernameKey]) { showError('Username นี้ลงทะเบียนไว้แล้วใน '+authAreaName()+' กรุณา Login แทน'); setAuthMode('login'); return; }
-    if (emailUsed) { showError('อีเมลนี้ลงทะเบียนไว้แล้วใน '+authAreaName()+' กรุณาใช้อีเมลอื่นหรือ Login ด้วย Username เดิม'); return; }
+    if (users[usernameKey]) { showError('ชื่อผู้ใช้นี้ลงทะเบียนไว้แล้วใน'+authAreaName()+' กรุณาเข้าสู่ระบบแทน'); setAuthMode('login'); return; }
+    if (emailUsed) { showError('อีเมลนี้ลงทะเบียนไว้แล้วใน'+authAreaName()+' กรุณาใช้อีเมลอื่นหรือเข้าสู่ระบบด้วยชื่อผู้ใช้เดิม'); return; }
     const user = { email, username, password, createdAt:new Date().toISOString() };
-    users[usernameKey] = user; saveUsers(users); setSession(user); e.target.reset(); renderProfile();
+    users[usernameKey] = user; saveUsers(users); e.target.reset(); setAuthMode('login'); document.getElementById('kc-login-form').reset(); showNotice('ลงทะเบียนสำเร็จ กรุณาเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านอีกครั้ง');
   });
   document.getElementById('kc-login-form').addEventListener('submit', function(e){
     e.preventDefault(); clearError();
@@ -8025,13 +8190,13 @@ document.addEventListener('DOMContentLoaded',function(){
     const username = String(fd.get('username') || '').trim();
     const password = String(fd.get('password') || '');
     const errors=[];
-    if(!username)errors.push('กรุณากรอก Username');
-    if(!password)errors.push('กรุณากรอก Password');
+    if(!username)errors.push('กรุณากรอกชื่อผู้ใช้');
+    if(!password)errors.push('กรุณากรอกรหัสผ่าน');
     if(errors.length){ showError(errors); return; }
     const usernameKey = username.toLowerCase();
     const user = getUsers()[usernameKey];
-    if (!user) { showError('ไม่พบบัญชี Username นี้ใน '+authAreaName()+' หากยังไม่เคยลงทะเบียนในหน้านี้ กรุณากดแท็บลงทะเบียนก่อน'); return; }
-    if (user.password !== password) { showError('Password ไม่ถูกต้อง กรุณาตรวจสอบตัวพิมพ์เล็ก/ใหญ่และลองอีกครั้ง'); return; }
+    if (!user) { showError('ไม่พบบัญชีชื่อผู้ใช้นี้ใน'+authAreaName()+' หากยังไม่เคยลงทะเบียนในระบบนี้ กรุณากดแท็บลงทะเบียนก่อน'); return; }
+    if (user.password !== password) { showError('รหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบตัวพิมพ์เล็ก/ใหญ่และลองอีกครั้ง'); return; }
     setSession(user); e.target.reset(); renderProfile();
   });
   renderProfile();
