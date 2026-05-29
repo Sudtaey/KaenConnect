@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ระบบรับคำร้องเรียนเทศบาลนครขอนแก่น</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --green:#06C755; --green-dark:#04a845; --green-deep:#0F6E56;
+  --green-light:#e1f5ee; --green-mid:#9FE1CB;
+  --border:#e2e8e4; --bg:#f5f9f6; --white:#fff;
+  --gray:#9ca3a8; --text:#1e2a24; --red:#e24b4a;
+  --blue:#1a6db5; --blue-light:#e6f1fb;
+  --amber:#ba7517; --amber-light:#faeeda;
+  --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);font-size:15px;}
+
+.header{background:#0F6E56;padding:18px 20px;display:flex;align-items:center;gap:12px;}
+.header-logo{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.header h1{color:#fff;font-size:17px;font-weight:700;line-height:1.3;}
+.header p{color:rgba(255,255,255,.65);font-size:12px;margin-top:1px;}
+
+.container{max-width:520px;margin:0 auto;padding:20px 16px 48px;}
+
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:12px;}
+.sec-title{font-size:11px;font-weight:700;color:var(--green-deep);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.sec-title::before{content:'';display:block;width:3px;height:14px;background:var(--green);border-radius:2px;}
+.form-group{margin-bottom:12px;}
+.form-group:last-child{margin-bottom:0;}
+label{display:block;font-size:13px;font-weight:600;color:#4a5568;margin-bottom:4px;}
+label .req{color:var(--red);}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(6,199,85,.1);}
+textarea{min-height:96px;resize:vertical;line-height:1.6;}
+.form-row{display:flex;flex-direction:column;gap:10px;}
+.err{font-size:12px;color:var(--red);margin-top:3px;display:none;}
+.err.show{display:block;}
+input.e,select.e,textarea.e{border-color:var(--red);}
+select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
+
+.community-hint{font-size:11px;color:var(--gray);margin-top:3px;display:flex;align-items:center;gap:4px;}
+.community-hint.hidden{display:none;}
+.zone-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;}
+.zone-1{background:#e8f0fe;color:#1a4fa8;}
+.zone-2{background:#e1f5ee;color:#0a5540;}
+.zone-3{background:#fff3e0;color:#8a4500;}
+.zone-4{background:#fce4ec;color:#8b0030;}
+.zone-x{background:#f3f4f6;color:#6b7280;}
+.community-count{font-size:11px;color:var(--green-deep);font-weight:600;margin-top:3px;}
+.unknown-hint{display:none;margin-top:6px;background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:8px 10px;font-size:12px;color:#7a5c00;line-height:1.6;}
+.unknown-hint.show{display:block;}
+
+.submit-btn{width:100%;padding:13px;background:var(--green-deep);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s;margin-bottom:10px;}
+.submit-btn:hover{background:var(--green);}
+.submit-btn:active{transform:scale(.99);}
+
+.track-btn{width:100%;padding:13px;background:transparent;color:var(--green-deep);border:2px solid var(--green-deep);border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;}
+.track-btn:hover{background:var(--green-light);}
+
+/* PROCESSING PAGE */
+#page-processing{display:none;}
+
+.ticket{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.ticket .no{font-size:17px;font-weight:800;color:var(--green-deep);letter-spacing:.5px;}
+.ticket .lbl{font-size:11px;color:var(--gray);margin-bottom:2px;}
+.status-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-light);color:var(--green-deep);font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+
+.proc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.proc-top{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.proc-sub{font-size:12px;color:var(--gray);margin-top:2px;}
+
+.prog-wrap{padding:12px 16px;border-bottom:1px solid var(--border);}
+.prog-bar{height:4px;background:#eef2ef;border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;width:0%;transition:width .5s ease;}
+
+.steps{padding:8px 16px 14px;}
+.step{display:flex;align-items:center;gap:12px;padding:9px 0;opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s;}
+.step.vis{opacity:1;transform:translateY(0);}
+.step+.step{border-top:1px solid #f2f5f3;}
+.s-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:#f5f5f5;transition:background .3s;}
+.s-ico.act{background:#fff8e1;animation:np .7s ease infinite alternate;}
+.s-ico.done{background:var(--green-light);}
+@keyframes np{to{background:#fff0a0;}}
+.s-info{flex:1;}
+.s-title{font-size:13px;font-weight:600;}
+.s-dot{width:8px;height:8px;border-radius:50%;background:#e0e0e0;flex-shrink:0;}
+.s-dot.l{border:2px solid var(--green);background:transparent;animation:spin .7s linear infinite;}
+.s-dot.d{background:var(--green);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.eta-hero{background:var(--green-deep);border-radius:var(--radius);padding:20px 18px;margin-bottom:12px;opacity:0;transform:translateY(12px);transition:opacity .4s,transform .4s;}
+.eta-hero.show{opacity:1;transform:translateY(0);}
+.eta-label{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px;}
+.eta-date-big{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;}
+.eta-days-line{font-size:13px;color:rgba(255,255,255,.7);}
+
+.result-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;opacity:0;transform:translateY(12px);transition:opacity .4s,transform .4s;}
+.result-card.show{opacity:1;transform:translateY(0);}
+.r-body{padding:4px 0;}
+.r-row{display:flex;align-items:center;padding:11px 16px;gap:10px;}
+.r-row+.r-row{border-top:1px solid #f4f7f5;}
+.r-ico{font-size:16px;width:22px;flex-shrink:0;}
+.r-ico:empty,.eta-ico:empty{display:none;}
+.r-label{font-size:12px;color:var(--gray);width:90px;flex-shrink:0;}
+.r-val{font-size:13px;font-weight:600;flex:1;}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.tag-g{background:#e1f5ee;color:#0a5540;}
+.tag-o{background:#fff3e0;color:#8a4500;}
+
+.btn-p{display:block;width:100%;padding:13px;background:var(--green-deep);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;margin-bottom:8px;transition:background .15s;}
+.btn-p:hover{background:var(--green);}
+.btn-s{display:block;width:100%;padding:11px;background:transparent;color:var(--green-deep);border:1px solid var(--green-deep);border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;text-align:center;transition:background .15s;}
+.btn-s:hover{background:var(--green-light);}
+.hidden{display:none!important;}
+
+/* TRACKING PAGE */
+#page-tracking{display:none;}
+
+.track-input-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px 20px;margin-bottom:12px;}
+.track-input-card .sec-title{margin-bottom:20px;}
+.track-search-row{display:flex;gap:10px;margin-top:14px;}
+.track-search-row input{flex:1;font-size:15px;padding:12px 14px;}
+.track-search-btn{padding:12px 20px;background:var(--green-deep);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;white-space:nowrap;}
+.track-search-btn:hover{background:var(--green);}
+
+.track-result{display:none;}
+.track-not-found{display:none;text-align:center;padding:32px;color:var(--gray);}
+
+.track-ticket-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.track-ticket-hd{background:var(--green-deep);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
+.track-ticket-hd .tno{font-size:18px;font-weight:800;color:#fff;}
+.track-ticket-hd .tlbl{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:3px;}
+
+.status-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;}
+.sp-done{background:#e1f5ee;color:#0a5540;}
+.sp-prog{background:#e6f1fb;color:#185fa5;}
+.sp-wait{background:#faeeda;color:#8a4500;}
+.sp-late{background:#fce4ec;color:#8b0030;}
+
+.track-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0;}
+.track-info-item{padding:12px 18px;border-bottom:1px solid var(--border);}
+.track-info-item:nth-child(odd){border-right:1px solid var(--border);}
+.track-info-label{font-size:11px;color:var(--gray);margin-bottom:3px;}
+.track-info-value{font-size:13px;font-weight:600;}
+
+.track-progress-section{padding:18px;}
+.tps-title{font-size:12px;font-weight:700;color:var(--green-deep);letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;}
+
+.timeline{position:relative;}
+.timeline::before{content:'';position:absolute;left:17px;top:8px;bottom:8px;width:2px;background:var(--border);}
+.tl-item{display:flex;gap:14px;padding-bottom:20px;position:relative;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;z-index:1;border:2px solid transparent;}
+.tl-done{background:var(--green-light);border-color:var(--green);color:var(--green-deep);}
+.tl-active{background:#fff8e1;border-color:#f59e0b;color:#8a4500;animation:pulse-tl 1.5s infinite;}
+.tl-wait{background:#f5f7f5;border-color:var(--border);color:var(--gray);}
+@keyframes pulse-tl{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
+.tl-content{flex:1;padding-top:6px;}
+.tl-step-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.tl-step-date{font-size:11px;color:var(--gray);}
+.tl-step-desc{font-size:12px;color:#555;margin-top:4px;line-height:1.5;}
+
+.eta-track-box{background:var(--green-light);border:1px solid #9FE1CB;border-radius:10px;padding:14px 16px;margin-top:12px;display:flex;align-items:center;gap:12px;}
+.eta-track-box .eta-ico{font-size:22px;}
+.eta-track-label{font-size:12px;color:var(--green-deep);margin-bottom:3px;}
+.eta-track-date{font-size:16px;font-weight:800;color:var(--green-deep);}
+
+.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--green-deep);background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:600;margin-bottom:16px;}
+.back-btn:hover{text-decoration:underline;}
+
+@media(min-width:480px){
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">KC</div>
+  <div>
+    <h1>KaenConnect</h1>
+    <p>ระบบรับคำร้องเรียนเทศบาลนครขอนแก่น</p>
+  </div>
+</div>
+
+<!-- PAGE: FORM -->
+<div id="page-form">
+<div class="container">
+
+  <div class="card">
+    <div class="sec-title">ข้อมูลผู้ร้องเรียน</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>ชื่อ-นามสกุล <span class="req">*</span></label>
+        <input id="fname" type="text" placeholder="นายสมชาย ใจดี"/>
+        <div class="err" id="e-fname">กรุณากรอกชื่อ-นามสกุล</div>
+      </div>
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์ <span class="req">*</span></label>
+        <input id="phone" type="tel" placeholder="08X-XXX-XXXX" maxlength="10"/>
+        <div class="err" id="e-phone">กรุณากรอกเบอร์ที่ถูกต้อง</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>เขต <span class="req">*</span></label>
+      <select id="zone" onchange="onZoneChange()">
+        <option value="">-- เลือกเขตที่เกิดปัญหา --</option>
+        <option value="1">เขต 1</option>
+        <option value="2">เขต 2</option>
+        <option value="3">เขต 3</option>
+        <option value="4">เขต 4</option>
+        <option value="unknown">ไม่ทราบเขต</option>
+      </select>
+      <div class="err" id="e-zone">กรุณาเลือกเขต</div>
+      <div class="unknown-hint" id="hint-zone-unknown"> ไม่เป็นไรครับ — เจ้าหน้าที่จะระบุเขตให้จากรายละเอียดปัญหา</div>
+    </div>
+    <div class="form-group">
+      <label>ชุมชน <span class="req">*</span><span id="zone-badge" class="zone-badge hidden"></span></label>
+      <select id="community" disabled>
+        <option value="">-- เลือกเขตก่อน --</option>
+      </select>
+      <div class="community-hint" id="community-hint"><span>กรุณาเลือกเขตก่อน เพื่อดูรายชื่อชุมชน</span></div>
+      <div class="community-count hidden" id="community-count"></div>
+      <div class="unknown-hint" id="hint-community-unknown"> กรุณาระบุสถานที่ใกล้เคียงในช่องรายละเอียด</div>
+      <div class="err" id="e-community">กรุณาเลือกชุมชน</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">รายละเอียดปัญหา</div>
+    <div class="form-group">
+      <label>อธิบายปัญหา <span class="req">*</span></label>
+      <textarea id="detail" placeholder="เช่น: ไฟถนนดับแถวซอยวัดประชาสรรค์มา 3 วันแล้ว มืดมากตอนกลางคืน..." maxlength="500"></textarea>
+      <div class="err" id="e-detail">กรุณาอธิบายปัญหา (อย่างน้อย 15 ตัวอักษร)</div>
+    </div>
+    <div class="form-group">
+      <label>แนบรูปภาพ <span style="font-weight:400;color:var(--gray);font-size:12px">(ไม่บังคับ)</span></label>
+      <input type="file" accept="image/*" multiple style="padding:8px;font-size:13px;"/>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="handleSubmit()">
+    <span>ส่งคำร้อง</span>
+  </button>
+
+  <button class="track-btn" onclick="showTrackPage()">
+    <span>ติดตามสถานะคำร้อง</span>
+  </button>
+
+</div>
+</div>
+
+<!-- PAGE: PROCESSING -->
+<div id="page-processing">
+<div class="container">
+
+  <div class="ticket">
+    <div>
+      <div class="lbl">เลขที่คำร้อง</div>
+      <div class="no" id="ticketNo">—</div>
+    </div>
+    <div style="text-align:right">
+      <div class="lbl" id="ticketTime"></div>
+      <div class="status-badge"><div class="status-dot"></div>รับแล้ว</div>
+    </div>
+  </div>
+
+  <div class="proc-card">
+    <div class="proc-top">
+      <div class="proc-sub" id="proc-sub">กรุณารอสักครู่...</div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="gfill"></div></div>
+    </div>
+    <div class="steps">
+      <div class="step" id="s1"><div class="s-ico" id="si1">1</div><div class="s-info"><div class="s-title">รับคำร้องของท่านแล้ว</div></div><div class="s-dot" id="ss1"></div></div>
+      <div class="step" id="s2"><div class="s-ico" id="si2">2</div><div class="s-info"><div class="s-title">วิเคราะห์ปัญหา</div></div><div class="s-dot" id="ss2"></div></div>
+      <div class="step" id="s3"><div class="s-ico" id="si3">3</div><div class="s-info"><div class="s-title">ส่งต่อหน่วยงานที่รับผิดชอบ</div></div><div class="s-dot" id="ss3"></div></div>
+      <div class="step" id="s4"><div class="s-ico" id="si4">4</div><div class="s-info"><div class="s-title">ประเมินระยะเวลาดำเนินการ</div></div><div class="s-dot" id="ss4"></div></div>
+    </div>
+  </div>
+
+  <div class="eta-hero hidden" id="etaBox">
+    <div class="eta-label">คาดว่าจะดำเนินการแล้วเสร็จ</div>
+    <div class="eta-date-big" id="etaDate">—</div>
+    <div class="eta-days-line" id="etaDaysLine">—</div>
+  </div>
+
+  <div class="result-card hidden" id="resultCard">
+    <div class="r-body">
+      <div class="r-row"><div class="r-ico"></div><div class="r-label">เรื่องร้องทุกข์</div><div class="r-val" id="r-complaint"></div></div>
+      <div class="r-row"><div class="r-ico"></div><div class="r-label">ประเภทปัญหา</div><div class="r-val"><span class="tag tag-g" id="r-type"></span></div></div>
+      <div class="r-row"><div class="r-ico"></div><div class="r-label">ส่วนงาน</div><div class="r-val" id="r-dept" style="color:var(--green-deep);font-weight:600;"></div></div>
+      <div class="r-row"><div class="r-ico"></div><div class="r-label">ฝ่ายรับผิดชอบ</div><div class="r-val"><span class="tag tag-o" id="r-unit"></span></div></div>
+      <div class="r-row"><div class="r-ico"></div><div class="r-label">เขต / ชุมชน</div><div class="r-val" id="r-location"></div></div>
+    </div>
+  </div>
+
+  <div class="hidden" id="actBtns">
+    <button class="btn-p" onclick="showTrackWithTicket()"> ติดตามสถานะคำร้องนี้</button>
+    <button class="btn-s" onclick="resetAll()">+ ยื่นคำร้องใหม่</button>
+  </div>
+
+</div>
+</div>
+
+<!-- PAGE: TRACKING -->
+<div id="page-tracking">
+<div class="container">
+
+  <button class="back-btn" onclick="backToForm()">
+    ← กลับหน้าหลัก
+  </button>
+
+  <div class="track-input-card">
+    <div class="sec-title">ติดตามสถานะคำร้อง</div>
+    <p style="font-size:13px;color:var(--gray);margin-bottom:4px;">กรอกเลขที่คำร้องเพื่อตรวจสอบสถานะปัจจุบัน</p>
+    <div class="track-search-row">
+      <input id="track-input" type="text" placeholder="เช่น 36/63 หรือ 4355/68" style="font-family:monospace;font-size:14px;"/>
+      <button class="track-search-btn" onclick="doTrack()">ค้นหา</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--gray);">
+
+    </div>
+  </div>
+
+  <!-- not found -->
+  <div class="track-not-found" id="track-not-found">
+    <div style="font-size:40px;margin-bottom:12px;"></div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:6px;">ไม่พบเลขคำร้องนี้</div>
+    <div style="font-size:13px;color:var(--gray);">กรุณาตรวจสอบเลขคำร้องอีกครั้ง หรือติดต่อเจ้าหน้าที่</div>
+  </div>
+
+  <!-- result -->
+  <div class="track-result" id="track-result">
+
+    <div class="track-ticket-card">
+      <div class="track-ticket-hd">
+        <div>
+          <div class="tlbl">เลขที่คำร้อง</div>
+          <div class="tno" id="tr-id">—</div>
+        </div>
+        <div id="tr-status-pill"></div>
+      </div>
+      <div class="track-info-grid">
+        <div class="track-info-item">
+          <div class="track-info-label">เรื่องร้องทุกข์</div>
+          <div class="track-info-value" id="tr-subject">—</div>
+        </div>
+        <div class="track-info-item">
+          <div class="track-info-label">ประเภทงาน</div>
+          <div class="track-info-value" id="tr-type">—</div>
+        </div>
+        <div class="track-info-item">
+          <div class="track-info-label">ส่วนงาน</div>
+          <div class="track-info-value" style="font-size:12px;" id="tr-dept">—</div>
+        </div>
+        <div class="track-info-item">
+          <div class="track-info-label">ฝ่ายรับผิดชอบ</div>
+          <div class="track-info-value" style="font-size:12px;" id="tr-fai">—</div>
+        </div>
+        <div class="track-info-item">
+          <div class="track-info-label">เขต / ชุมชน</div>
+          <div class="track-info-value" style="font-size:12px;" id="tr-location">—</div>
+        </div>
+        <div class="track-info-item">
+          <div class="track-info-label">วันที่รับเรื่อง</div>
+          <div class="track-info-value" id="tr-date">—</div>
+        </div>
+      </div>
+      <div class="track-progress-section">
+        <div class="tps-title">ความคืบหน้า</div>
+        <div class="timeline" id="tr-timeline"></div>
+        <div id="tr-eta-box"></div>
+      </div>
+    </div>
+
+    <button class="btn-s" onclick="clearTrack()"> ค้นหาคำร้องอื่น</button>
+
+  </div>
+
+</div>
+</div>
+
+<script>
+const COMMUNITIES = {
+  '1':['โนนชัย 1','โนนชัย 2','โนนชัย 3','ดอนย่านาง 1','ดอนย่านาง 2','ดอนย่านาง 3','หลังศูนย์ราชการ 1','หลังศูนย์ราชการ 2','เทพารักษ์ 1','เทพารักษ์ 2','เทพารักษ์ 3','เทพารักษ์ 4','เทพารักษ์ 5','พัฒนาเทพารักษ์','เจ้าพ่อเกษม','บขส.','เจ้าพ่อทองสุข'],
+  '2':['หนองใหญ่ 1','หนองใหญ่ 2','หนองใหญ่ 3','หนองใหญ่ 4','ซอยธารทิพย์','บะขาม','ศรีจันทร์ประชาฯ','นาคะประเวศน์','ชัยณรงค์สามัคคี','คุ้มพระลับ','หลักเมือง','ทุ่งเศรษฐี','มิตรสัมพันธ์ 1','มิตรสัมพันธ์ 2','โพธิบังลังก์ทอง','บ้านพัก ต.ช.ด.','ทุ่งสร้างพัฒนา','ศิริมงคล','ศรีจันทร์พัฒนา','หน้า ร.พ.ศูนย์ขอนแก่น','บ้านเลขที่ 37','หัวสะพานสัมพันธ์','ชลประทาน','เจ้าพ่อขุนภักดี','ธนาคร','คุ้มหนองคู','ศรีจันทร์','ตรีเทพนครขอนแก่น'],
+  '3':['บ้านตูม','โนนทัน 1','โนนทัน 2','โนนทัน 3','โนนทัน 4','โนนทัน 5','โนนทัน 6','โนนทัน 7','โนนทัน 8','โนนทัน 9','หนองแวงเมืองเก่า 1','หนองแวงเมืองเก่า 2','หนองแวงเมืองเก่า 3','หนองแวงเมืองเก่า 4','หลังสนามกีฬา 1','หลังสนามกีฬา 2','คุ้มวัดกลาง','คุ้มวัดธาตุ','แก่นนคร','กศน.','โนนหนองวัด 1','โนนหนองวัด 2','โนนหนองวัด 3','โนนหนองวัด 4','หนองวัดพัฒนา','คุ้มวุฒาราม','การเคหะ','เหล่านาดี 12','พระนครศรีบริรักษ์','พิมานชลร่วมใจพัฒนา','95 ก้าวหน้านคร'],
+  '4':['ศรีฐาน 1','ศรีฐาน 2','ศรีฐาน 3','ศรีฐาน 4','เทคโนภาคฯ','สามเหลี่ยม 1','สามเหลี่ยม 2','สามเหลี่ยม 3','สามเหลี่ยม 4','สามเหลี่ยม 5','ไทยสมุทร','หนองแวงตราชู 1','หนองแวงตราชู 2','หนองแวงตราชู 3','หนองแวงตราชู 4','คุ้มวัดป่าอดุลยาราม','ตะวันใหม่','มิตรภาพ','ตลาดต้นตาล']
+};
+const ZONE_COLORS={'1':{cls:'zone-1',label:'เขต 1 — 17 ชุมชน'},'2':{cls:'zone-2',label:'เขต 2 — 28 ชุมชน'},'3':{cls:'zone-3',label:'เขต 3 — 31 ชุมชน'},'4':{cls:'zone-4',label:'เขต 4 — 19 ชุมชน'}};
+
+function onZoneChange() {
+  const v=document.getElementById('zone').value;
+  const cs=document.getElementById('community');
+  const hint=document.getElementById('community-hint');
+  const badge=document.getElementById('zone-badge');
+  const countEl=document.getElementById('community-count');
+  const hintZU=document.getElementById('hint-zone-unknown');
+  const hintCU=document.getElementById('hint-community-unknown');
+  cs.innerHTML=''; cs.classList.remove('e');
+  document.getElementById('e-community').classList.remove('show');
+  hintCU.classList.remove('show');
+  if(v==='unknown'){
+    cs.innerHTML='<option value="unknown">ไม่ทราบชุมชน</option>';
+    cs.disabled=false; hint.classList.add('hidden');
+    badge.className='zone-badge zone-x'; badge.textContent='ไม่ทราบเขต'; badge.classList.remove('hidden');
+    countEl.classList.add('hidden'); hintZU.classList.add('show'); hintCU.classList.add('show'); return;
+  }
+  hintZU.classList.remove('show');
+  if(!v){cs.disabled=true;cs.innerHTML='<option value="">-- เลือกเขตก่อน --</option>';hint.classList.remove('hidden');badge.className='zone-badge hidden';countEl.classList.add('hidden');return;}
+  const def=document.createElement('option');def.value='';def.textContent='-- เลือกชุมชน --';cs.appendChild(def);
+  const list=COMMUNITIES[v];
+  list.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;cs.appendChild(o);});
+  const unk=document.createElement('option');unk.value='unknown';unk.textContent='ไม่ทราบชุมชน';cs.appendChild(unk);
+  cs.disabled=false; hint.classList.add('hidden');
+  const zi=ZONE_COLORS[v];
+  badge.className=`zone-badge ${zi.cls}`;badge.textContent=zi.label;badge.classList.remove('hidden');
+  countEl.textContent=` มีชุมชนในเขตนี้ทั้งหมด ${list.length} ชุมชน`;countEl.classList.remove('hidden');
+  cs.onchange=function(){hintCU.classList.toggle('show',cs.value==='unknown');};
+  cs.focus();
+}
+
+const RULES=[
+  {kw:['ไฟ','แสงสว่าง','หลอด','โคม','ไฟถนน','ไฟฟ้า'],complaint:'ไฟฟ้า',type:'ซ่อมแซมไฟฟ้าชำรุด',dept:'ส่วนการโยธา',unit:'ฝ่ายสาธารณูปโภค',days:7},
+  {kw:['ฝาท่อ','ท่อ','ระบาย','น้ำท่วม','น้ำขัง','ดูดท่อ','ลอกท่อ'],complaint:'ท่อระบายน้ำ',type:'ท่อระบายน้ำ',dept:'ส่วนช่างสุขาภิบาล',unit:'ฝ่ายจัดการคุณภาพน้ำ',days:47},
+  {kw:['ถนน','หลุม','บ่อ','ทางเท้า','สะพาน','ยางมะตอย'],complaint:'ถนน',type:'ซ่อมแซมถนนและสะพาน',dept:'ส่วนการโยธา',unit:'ฝ่ายสาธารณูปโภค',days:45},
+  {kw:['ต้นไม้','กิ่ง','โค่น','สวน','เกาะกลาง','ตัดกิ่ง'],complaint:'งานตัดกิ่งไม้และเกาะกลางถนน',type:'ตัดกิ่งไม้/สวนสาธารณะ',dept:'ส่วนการโยธา',unit:'ฝ่ายสวนสาธารณะ',days:45},
+  {kw:['จราจร','สัญญาณ','ไฟแดง','ไฟกระพริบ','กระจกนูน','ป้ายซอย','ยางชะลอ','เส้นจราจร'],complaint:'วิศวกรรมจราจร',type:'งานจราจร',dept:'ส่วนการโยธา',unit:'ฝ่ายวิศวกรรมจราจร',days:27},
+  {kw:['อาคาร','สร้าง','รุกล้ำ','ก่อสร้าง','โครงสร้าง'],complaint:'งานอาคาร',type:'งานอาคาร/ผังเมือง',dept:'ส่วนควบคุมการก่อสร้างอาคารและผังเมือง',unit:'ฝ่ายงานควบคุมอาคารและผังเมือง',days:46},
+];
+const DEFAULT={complaint:'งานอื่น ๆ',type:'ปัญหาทั่วไป',dept:'ส่วนการโยธา',unit:'ฝ่ายสาธารณูปโภค',days:15};
+
+function classify(text){const t=text.toLowerCase();for(const r of RULES){if(r.kw.some(k=>t.includes(k)))return r;}return DEFAULT;}
+
+// ── shared ticket store (new submissions) ──
+let _newTickets = {};
+let _lastTicketNo = null;
+let _lastResult = null;
+const SHARED_TICKET_KEY='bdi_shared_tickets_v1';
+const DASHBOARD_TICKET_KEY='bdi_dashboard_tickets_v1';
+const DELETED_TICKET_KEY='bdi_deleted_ticket_ids_v1';
+const TICKET_SEQUENCE_KEY='bdi_ticket_sequence_v1';
+
+function safeJsonParse(value,fallback){
+  try{return value?JSON.parse(value):fallback;}catch(e){return fallback;}
+}
+
+function loadSharedTickets(){
+  _newTickets=safeJsonParse(localStorage.getItem(SHARED_TICKET_KEY),{});
+  return _newTickets;
+}
+
+function saveSharedTicket(record){
+  const tickets=loadSharedTickets();
+  tickets[record.id]=record;
+  localStorage.setItem(SHARED_TICKET_KEY,JSON.stringify(tickets));
+  _newTickets=tickets;
+  updateTicketSequence(record.id);
+}
+
+function loadDashboardTickets(){
+  const rows=safeJsonParse(localStorage.getItem(DASHBOARD_TICKET_KEY),[]);
+  return rows.reduce((acc,row)=>{if(row&&row.id)acc[row.id]=row;return acc;},{});
+}
+
+function loadDeletedTicketIds(){
+  return new Set(safeJsonParse(localStorage.getItem(DELETED_TICKET_KEY),[]));
+}
+
+function getCurrentYearSuffix(){
+  return String(new Date().getFullYear()+543).slice(-2);
+}
+
+function loadTicketSequence(){
+  return safeJsonParse(localStorage.getItem(TICKET_SEQUENCE_KEY),{});
+}
+
+function updateTicketSequence(ticketId){
+  const match=String(ticketId||'').trim().match(/^(\d+)\/(\d{2})$/);
+  if(!match)return;
+  const seq=loadTicketSequence();
+  const year=match[2];
+  seq[year]=Math.max(Number(seq[year]||0),Number(match[1]));
+  localStorage.setItem(TICKET_SEQUENCE_KEY,JSON.stringify(seq));
+}
+
+function getNextTicketNo(){
+  const year=getCurrentYearSuffix();
+  const sources=Object.values(loadSharedTickets());
+  const seq=loadTicketSequence();
+  const maxNo=sources.reduce((max,item)=>{
+    if(!item||!item.id)return max;
+    const match=String(item.id).trim().match(/^(\d+)\/(\d{2})$/);
+    if(!match||match[2]!==year)return max;
+    return Math.max(max,Number(match[1]));
+  },Number(seq[year]||0));
+  return (maxNo+1)+'/'+year;
+}
+
+function toDashboardCat(type,subject){
+  const text=(type+' '+subject).toLowerCase();
+  if(text.includes('ไฟ'))return 'pwr';
+  if(text.includes('ท่อ')||text.includes('น้ำ'))return 'drain';
+  if(text.includes('ถนน')||text.includes('สะพาน')||text.includes('ทางเท้า'))return 'road';
+  if(text.includes('ต้นไม้')||text.includes('สวน'))return 'tree';
+  if(text.includes('อาคาร')||text.includes('ก่อสร้าง'))return 'build';
+  return 'other';
+}
+
+loadSharedTickets();
+
+function handleSubmit(){
+  let ok=true;
+  function chk(id,errId,fn){const el=document.getElementById(id);const ok2=fn(el.value);el.classList.toggle('e',!ok2);document.getElementById(errId).classList.toggle('show',!ok2);if(!ok2)ok=false;}
+  chk('fname','e-fname',v=>v.trim().length>=2);
+  chk('phone','e-phone',v=>v.replace(/\D/g,'').length>=9);
+  chk('zone','e-zone',v=>v!=='');
+  chk('community','e-community',v=>v!=='');
+  chk('detail','e-detail',v=>v.trim().length>=15);
+  if(!ok)return;
+  const detail=document.getElementById('detail').value;
+  const zoneVal=document.getElementById('zone').value;
+  const community=document.getElementById('community').value;
+  const result=classify(detail);
+  const ticket=getNextTicketNo();
+  _lastTicketNo=ticket;
+  const now=new Date();
+  const eta=new Date();eta.setDate(eta.getDate()+result.days);
+  const zoneLabel=zoneVal==='unknown'?'ไม่ทราบเขต':'เขต '+zoneVal;
+  const commLabel=community==='unknown'?'ไม่ทราบชุมชน':community;
+  _lastResult={
+    id:ticket,
+    subject:result.complaint,
+    type:result.type,
+    cat:toDashboardCat(result.type,result.complaint),
+    dept:result.dept,
+    fai:result.unit,
+    zone:zoneLabel,
+    comm:commLabel,
+    date:now.toLocaleDateString('th-TH',{day:'numeric',month:'numeric',year:'numeric'}),
+    done:eta.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}),
+    status:'กำลังดำเนินการ',
+    days:result.days,
+    etaDays:result.days,
+    isNew:true
+  };
+  saveSharedTicket(_lastResult);
+  document.getElementById('ticketNo').textContent=ticket;
+  document.getElementById('ticketTime').textContent=now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+' น.';
+  document.getElementById('r-location').textContent=zoneLabel+' · '+commLabel;
+  document.getElementById('r-complaint').textContent=result.complaint;
+  document.getElementById('r-type').textContent=result.type;
+  document.getElementById('r-dept').textContent=result.dept;
+  document.getElementById('r-unit').textContent=result.unit;
+  document.getElementById('etaDate').textContent=eta.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('etaDaysLine').textContent='ภายใน '+result.days+' วันทำการ';
+  document.getElementById('page-form').style.display='none';
+  document.getElementById('page-processing').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  runAnimation();
+}
+
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+function setPct(p){document.getElementById('gfill').style.width=p+'%';}
+function setStep(n,state){
+  const ico=document.getElementById('si'+n);const dot=document.getElementById('ss'+n);
+  document.getElementById('s'+n).classList.add('vis');
+  ico.className='s-ico';dot.className='s-dot';
+  if(state==='l'){ico.classList.add('act');dot.classList.add('l');}
+  if(state==='d'){ico.classList.add('done');dot.classList.add('d');}
+}
+async function runAnimation(){
+  for(let i=1;i<=4;i++)document.getElementById('s'+i).classList.add('vis');
+  await delay(500);setStep(1,'l');setPct(15);document.getElementById('proc-sub').textContent='รับข้อมูลคำร้อง...';
+  await delay(700);setStep(1,'d');setPct(30);
+  await delay(300);setStep(2,'l');setPct(45);document.getElementById('proc-sub').textContent='วิเคราะห์ปัญหา...';
+  await delay(1300);setStep(2,'d');setPct(60);
+  await delay(300);setStep(3,'l');setPct(75);document.getElementById('proc-sub').textContent='ส่งต่อหน่วยงาน...';
+  await delay(1000);setStep(3,'d');setPct(88);
+  await delay(300);setStep(4,'l');setPct(95);document.getElementById('proc-sub').textContent='ประเมินระยะเวลา...';
+  await delay(900);setStep(4,'d');setPct(100);document.getElementById('proc-sub').textContent='เสร็จสิ้น ';
+  await delay(400);
+  const eb=document.getElementById('etaBox');eb.classList.remove('hidden');requestAnimationFrame(()=>eb.classList.add('show'));
+  await delay(350);
+  const rc=document.getElementById('resultCard');rc.classList.remove('hidden');requestAnimationFrame(()=>rc.classList.add('show'));
+  await delay(250);
+  document.getElementById('actBtns').classList.remove('hidden');
+}
+
+function showTrackWithTicket(){
+  showTrackPage();
+  if(_lastTicketNo){
+    document.getElementById('track-input').value=_lastTicketNo;
+    doTrack();
+  }
+}
+
+function resetAll(){
+  document.getElementById('page-processing').style.display='none';
+  document.getElementById('page-form').style.display='block';
+  const cs=document.getElementById('community');
+  cs.innerHTML='<option value="">-- เลือกเขตก่อน --</option>';
+  cs.disabled=true;cs.onchange=null;
+  document.getElementById('zone').value='';
+  document.getElementById('community-hint').classList.remove('hidden');
+  document.getElementById('zone-badge').className='zone-badge hidden';
+  document.getElementById('community-count').classList.add('hidden');
+  document.getElementById('hint-zone-unknown').classList.remove('show');
+  document.getElementById('hint-community-unknown').classList.remove('show');
+  ['resultCard','etaBox','actBtns'].forEach(id=>{const el=document.getElementById(id);el.classList.add('hidden');el.classList.remove('show');});
+  document.getElementById('gfill').style.width='0%';
+  for(let i=1;i<=4;i++){document.getElementById('s'+i).classList.remove('vis');document.getElementById('si'+i).className='s-ico';document.getElementById('ss'+i).className='s-dot';}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showTrackPage(){
+  document.getElementById('page-form').style.display='none';
+  document.getElementById('page-processing').style.display='none';
+  document.getElementById('page-tracking').style.display='block';
+  document.getElementById('track-result').style.display='none';
+  document.getElementById('track-not-found').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backToForm(){
+  document.getElementById('page-tracking').style.display='none';
+  document.getElementById('page-form').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function quickTrack(id){
+  document.getElementById('track-input').value=id;
+  doTrack();
+}
+
+function clearTrack(){
+  document.getElementById('track-result').style.display='none';
+  document.getElementById('track-not-found').style.display='none';
+  document.getElementById('track-input').value='';
+  document.getElementById('track-input').focus();
+}
+
+// ── Dataset from dashboard ──
+const DATASET_SAMPLE={
+  '36/63':{id:'36/63',subject:'ไฟฟ้า',type:'ซ่อมแซมไฟฟ้าชำรุด',dept:'ส่วนการโยธา',fai:'ฝ่ายสาธารณูปโภค',zone:'เขต 4',comm:'หนองแวงตราชู 3',date:'18/02/2563',done:'26/02/2563',status:'ประเมินผลเสร็จสิ้น',days:8},
+  '443/63':{id:'443/63',subject:'ท่อระบายน้ำ',type:'ดูด/ลอก ท่อระบายน้ำ',dept:'ส่วนช่างสุขาภิบาล',fai:'ฝ่ายจัดการคุณภาพน้ำ',zone:'เขต 3',comm:'โนนหนองวัด 3',date:'26/03/2563',done:'29/04/2563',status:'ประเมินผลเสร็จสิ้น',days:34},
+  '1665/63':{id:'1665/63',subject:'ท่อระบายน้ำ',type:'ดูด/ลอก ท่อระบายน้ำ',dept:'ส่วนช่างสุขาภิบาล',fai:'ฝ่ายจัดการคุณภาพน้ำ',zone:'เขต 3',comm:'หนองแวงเมืองเก่า4',date:'02/07/2563',done:'22/07/2564',status:'ประเมินผลเสร็จสิ้น',days:386},
+  '4355/68':{id:'4355/68',subject:'ไฟฟ้า',type:'ซ่อมแซมไฟฟ้าชำรุด',dept:'ส่วนการโยธา',fai:'ฝ่ายสาธารณูปโภค',zone:'เขต 4',comm:'หนองแวงตราชู 1',date:'06/05/2568',done:'14/05/2568',status:'ประเมินผลเสร็จสิ้น',days:8},
+  '4496/69':{id:'4496/69',subject:'ท่อระบายน้ำ',type:'ฝาท่อระบายน้ำ',dept:'ส่วนช่างสุขาภิบาล',fai:'ฝ่ายจัดการคุณภาพน้ำ',zone:'เขต 2',comm:'ศรีจันทร์พัฒนา',date:'20/04/2569',done:'-',status:'รอช่างรับเรื่อง',days:null},
+  '4625/69':{id:'4625/69',subject:'งานควบคุมการก่อสร้าง',type:'ตรวจสอบโครงสร้างอื่นๆ',dept:'ส่วนควบคุมการก่อสร้างอาคารและผังเมือง',fai:'ฝ่ายแบบแผนและก่อสร้าง',zone:'เขต 1',comm:'ไม่ระบุ',date:'28/04/2569',done:'12/05/2569',status:'เกินกำหนด',days:14},
+  '255/69':{id:'255/69',subject:'วิศวกรรมจราจร',type:'สัญญาณไฟกระพริบ',dept:'ส่วนการโยธา',fai:'ฝ่ายวิศวกรรมจราจร',zone:'เขต 2',comm:'คุ้มหนองคู',date:'08/10/2568',done:'04/12/2568',status:'เกินกำหนด',days:57},
+  '4762/69':{id:'4762/69',subject:'ท่อระบายน้ำ',type:'ดูด/ลอก ท่อระบายน้ำ',dept:'ส่วนช่างสุขาภิบาล',fai:'ฝ่ายจัดการคุณภาพน้ำ',zone:'ไม่ระบุ',comm:'ไม่ระบุ',date:'01/05/2569',done:'19/06/2569',status:'กำลังดำเนินการ',days:49},
+  '4898/68':{id:'4898/68',subject:'งานอาคาร',type:'งานอาคารใหม่ 1',dept:'ส่วนควบคุมการก่อสร้างอาคารและผังเมือง',fai:'ฝ่ายงานควบคุมอาคารและผังเมือง',zone:'ไม่ระบุ',comm:'ไม่ระบุ',date:'24/05/2568',done:'24/11/2568',status:'อยู่ระหว่างการติดตาม',days:184},
+};
+
+const STATUS_STEPS={
+  'ประเมินผลเสร็จสิ้น':[
+    {ico:'',cls:'tl-done',title:'รับคำร้องเข้าระบบ',desc:'คำร้องถูกบันทึกและมอบหมายให้หน่วยงานแล้ว'},
+    {ico:'',cls:'tl-done',title:'ส่งต่อผู้รับผิดชอบ',desc:'เจ้าหน้าที่ได้รับคำร้องและตรวจสอบแล้ว'},
+    {ico:'',cls:'tl-done',title:'ดำเนินการแก้ไข',desc:'เจ้าหน้าที่ได้ดำเนินการแก้ไขเรียบร้อยแล้ว'},
+    {ico:'',cls:'tl-done',title:'ประเมินผลเสร็จสิ้น',desc:'งานเสร็จสมบูรณ์ คำร้องปิดแล้ว'},
+  ],
+  'กำลังดำเนินการ':[
+    {ico:'',cls:'tl-done',title:'รับคำร้องเข้าระบบ',desc:'คำร้องถูกบันทึกและมอบหมายให้หน่วยงานแล้ว'},
+    {ico:'',cls:'tl-done',title:'ส่งต่อผู้รับผิดชอบ',desc:'เจ้าหน้าที่ได้รับคำร้องและตรวจสอบแล้ว'},
+    {ico:'◉',cls:'tl-active',title:'กำลังดำเนินการแก้ไข',desc:'เจ้าหน้าที่กำลังดำเนินการอยู่'},
+    {ico:'○',cls:'tl-wait',title:'ประเมินผลเสร็จสิ้น',desc:'รอดำเนินการเสร็จ'},
+  ],
+  'รอช่างรับเรื่อง':[
+    {ico:'',cls:'tl-done',title:'รับคำร้องเข้าระบบ',desc:'คำร้องถูกบันทึกในระบบแล้ว'},
+    {ico:'◉',cls:'tl-active',title:'รอช่างรับเรื่อง',desc:'กำลังมอบหมายให้เจ้าหน้าที่ผู้รับผิดชอบ'},
+    {ico:'○',cls:'tl-wait',title:'ดำเนินการแก้ไข',desc:'รอดำเนินการ'},
+    {ico:'○',cls:'tl-wait',title:'ประเมินผลเสร็จสิ้น',desc:'รอดำเนินการ'},
+  ],
+  'อยู่ระหว่างการติดตาม':[
+    {ico:'',cls:'tl-done',title:'รับคำร้องเข้าระบบ',desc:'คำร้องถูกบันทึกและมอบหมายแล้ว'},
+    {ico:'',cls:'tl-done',title:'ส่งต่อผู้รับผิดชอบ',desc:'เจ้าหน้าที่รับทราบคำร้องแล้ว'},
+    {ico:'◉',cls:'tl-active',title:'อยู่ระหว่างการติดตาม',desc:'งานอยู่ระหว่างดำเนินการ เจ้าหน้าที่กำลังติดตาม'},
+    {ico:'○',cls:'tl-wait',title:'ประเมินผลเสร็จสิ้น',desc:'รอดำเนินการ'},
+  ],
+  'เกินกำหนด':[
+    {ico:'',cls:'tl-done',title:'รับคำร้องเข้าระบบ',desc:'คำร้องถูกบันทึกแล้ว'},
+    {ico:'',cls:'tl-done',title:'ส่งต่อผู้รับผิดชอบ',desc:'เจ้าหน้าที่รับทราบแล้ว'},
+    {ico:'',cls:'tl-active',title:'เกินกำหนด — กำลังเร่งดำเนินการ',desc:'คำร้องเกินระยะเวลา SLA กำลังประสานเร่งรัด'},
+    {ico:'○',cls:'tl-wait',title:'ประเมินผลเสร็จสิ้น',desc:'รอดำเนินการ'},
+  ],
+  'ส่งต่อหน่วยงานอื่น':[
+    {ico:'',cls:'tl-done',title:'รับคำร้องเข้าระบบ',desc:'คำร้องถูกบันทึกแล้ว'},
+    {ico:'',cls:'tl-done',title:'ส่งต่อหน่วยงานอื่น',desc:'คำร้องนี้ถูกส่งต่อให้หน่วยงานที่รับผิดชอบโดยตรง'},
+    {ico:'○',cls:'tl-wait',title:'ดำเนินการแก้ไข',desc:'รอดำเนินการจากหน่วยงานปลายทาง'},
+    {ico:'○',cls:'tl-wait',title:'ประเมินผลเสร็จสิ้น',desc:'รอดำเนินการ'},
+  ],
+};
+
+const STATUS_PILL={
+  'ประเมินผลเสร็จสิ้น':'<span class="status-pill sp-done"> เสร็จสิ้น</span>',
+  'กำลังดำเนินการ':'<span class="status-pill sp-prog"> กำลังดำเนินการ</span>',
+  'รอช่างรับเรื่อง':'<span class="status-pill sp-wait"> รอรับเรื่อง</span>',
+  'อยู่ระหว่างการติดตาม':'<span class="status-pill sp-wait"> ติดตาม</span>',
+  'เกินกำหนด':'<span class="status-pill sp-late"> เกินกำหนด</span>',
+  'ส่งต่อหน่วยงานอื่น':'<span class="status-pill sp-prog"> ส่งต่อ</span>',
+};
+
+function doTrack(){
+  const raw=document.getElementById('track-input').value.trim();
+  if(!raw)return;
+
+  // normalize: "4355 68" -> "4355/68", "4355-68" -> "4355/68"
+  const key=raw.replace(/[\s\-_]+/g,'/');
+  const deletedIds=loadDeletedTicketIds();
+
+  // look in new tickets first, then dataset
+  const sharedTickets=loadSharedTickets();
+  const dashboardTickets=loadDashboardTickets();
+  const record=deletedIds.has(key)||deletedIds.has(raw)
+    ? null
+    : sharedTickets[key]||sharedTickets[raw]||dashboardTickets[key]||dashboardTickets[raw]||DATASET_SAMPLE[key]||DATASET_SAMPLE[raw];
+
+  document.getElementById('track-result').style.display='none';
+  document.getElementById('track-not-found').style.display='none';
+
+  if(!record){
+    document.getElementById('track-not-found').style.display='block';
+    return;
+  }
+
+  // fill data
+  document.getElementById('tr-id').textContent=record.id;
+  document.getElementById('tr-subject').textContent=record.subject;
+  document.getElementById('tr-type').textContent=record.type;
+  document.getElementById('tr-dept').textContent=record.dept;
+  document.getElementById('tr-fai').textContent=record.fai;
+  document.getElementById('tr-location').textContent=record.zone+(record.comm&&record.comm!=='ไม่ระบุ'?' · '+record.comm:'');
+  document.getElementById('tr-date').textContent=record.date;
+  document.getElementById('tr-status-pill').innerHTML=STATUS_PILL[record.status]||`<span class="status-pill sp-prog">${record.status}</span>`;
+
+  // timeline
+  const steps=STATUS_STEPS[record.status]||STATUS_STEPS['กำลังดำเนินการ'];
+  document.getElementById('tr-timeline').innerHTML=steps.map(s=>`
+    <div class="tl-item">
+      <div class="tl-icon ${s.cls}">${s.ico}</div>
+      <div class="tl-content">
+        <div class="tl-step-title">${s.title}</div>
+        <div class="tl-step-desc">${s.desc}</div>
+      </div>
+    </div>`).join('');
+
+  // ETA
+  const etaBox=document.getElementById('tr-eta-box');
+  if(record.status==='ประเมินผลเสร็จสิ้น'){
+    etaBox.innerHTML=`<div class="eta-track-box" style="background:#e1f5ee;border-color:#9FE1CB;">
+      <div class="eta-ico"></div>
+      <div><div class="eta-track-label">ดำเนินการเสร็จแล้วเมื่อ</div>
+      <div class="eta-track-date">${record.done} · ใช้เวลา ${record.days} วัน</div></div>
+    </div>`;
+  } else if(record.status==='รอช่างรับเรื่อง'||record.status==='ส่งต่อหน่วยงานอื่น'){
+    etaBox.innerHTML=`<div class="eta-track-box" style="background:#faeeda;border-color:#f59e0b;">
+      <div class="eta-ico"></div>
+      <div><div class="eta-track-label">สถานะ</div>
+      <div class="eta-track-date">${record.status} — รอการมอบหมาย</div></div>
+    </div>`;
+  } else if(record.done&&record.done!=='-'){
+    etaBox.innerHTML=`<div class="eta-track-box">
+      <div class="eta-ico"></div>
+      <div><div class="eta-track-label">คาดว่าจะเสร็จ</div>
+      <div class="eta-track-date">${record.done}${record.days?' · ภายใน '+record.days+' วัน':''}</div></div>
+    </div>`;
+  } else {
+    etaBox.innerHTML='';
+  }
+
+  document.getElementById('track-result').style.display='block';
+}
+
+// Enter key support
+document.addEventListener('DOMContentLoaded',function(){
+  const ti=document.getElementById('track-input');
+  if(ti)ti.addEventListener('keypress',function(e){if(e.key==='Enter')doTrack();});
+});
+</script>
+</body>
+</html>
