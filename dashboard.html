@@ -7880,5 +7880,162 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 </script>
+<script>
+(function(){
+  const role = location.pathname.toLowerCase().includes('dashboard') ? 'staff' : 'citizen';
+  const AUTH_USER_KEY = 'kc_registered_users_' + role + '_v1';
+  const SESSION_KEY = 'kc_session_' + role + '_v1';
+
+  function safeJson(value, fallback){ try { return value ? JSON.parse(value) : fallback; } catch(e) { return fallback; } }
+  function getUsers(){
+    const users = safeJson(localStorage.getItem(AUTH_USER_KEY), {});
+    const migrated = {};
+    let changed = false;
+    Object.entries(users).forEach(([key,user]) => {
+      if (!user || !user.username) return;
+      const usernameKey = String(user.username).trim().toLowerCase();
+      migrated[usernameKey] = user;
+      if (key !== usernameKey) changed = true;
+    });
+    if (changed) saveUsers(migrated);
+    return changed ? migrated : users;
+  }
+  function saveUsers(users){ localStorage.setItem(AUTH_USER_KEY, JSON.stringify(users)); }
+  function getSession(){ return safeJson(localStorage.getItem(SESSION_KEY), null); }
+  function setSession(user){
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      email: user.email,
+      username: user.username,
+      role,
+      loginAt: new Date().toISOString()
+    }));
+  }
+  function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+  function initials(name){
+    return String(name || 'U').trim().split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase();
+  }
+  function escapeAuthHtml(value){
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
+  const css = [
+    '.kc-auth-screen{--kc-auth-accent:var(--green-deep,#0F6E56);--kc-auth-accent-2:var(--green,#06C755);--kc-auth-panel:var(--white,#fff);--kc-auth-field:#fff;--kc-auth-soft:rgba(15,110,86,.12);--kc-auth-hover:rgba(15,110,86,.08);position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(8,36,28,.72);backdrop-filter:blur(14px);padding:20px;opacity:0;transition:opacity .24s ease}',
+    '.kc-auth-screen.staff{--kc-auth-accent:var(--blue,#4fa3e0);--kc-auth-accent-2:var(--blue2,#1a6db5);--kc-auth-panel:var(--bg2,#111820);--kc-auth-field:var(--bg,#0b0f14);--kc-auth-soft:rgba(79,163,224,.16);--kc-auth-hover:rgba(79,163,224,.09);background:rgba(2,7,13,.86)}',
+    '.kc-auth-screen.citizen{background:rgba(7,45,34,.72)}',
+    '.kc-auth-screen.show{display:flex;opacity:1}',
+    '.kc-auth-card{width:min(420px,100%);background:var(--kc-auth-panel);color:var(--text,#16342c);border:1px solid var(--border,#dde8e1);border-radius:14px;padding:24px;box-shadow:0 26px 90px rgba(0,0,0,.34);font-family:var(--font,Sarabun,sans-serif);transform:translateY(12px) scale(.982);animation:kcAuthIn .3s cubic-bezier(.2,.8,.2,1) forwards;position:relative;overflow:hidden}',
+    '.kc-auth-card:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--kc-auth-accent)}',
+    '@keyframes kcAuthIn{to{transform:translateY(0) scale(1)}}@keyframes kcShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes kcPop{0%{transform:scale(.98)}100%{transform:scale(1)}}.kc-auth-card.shake{animation:kcShake .22s ease, kcAuthIn .3s cubic-bezier(.2,.8,.2,1) forwards}',
+    '.kc-auth-title{font-size:22px;font-weight:900;margin:0 0 4px}.kc-auth-sub{font-size:13px;color:var(--text2,#718177);margin:0 0 17px}.kc-auth-title:after{content:"";display:block;width:34px;height:3px;background:var(--kc-auth-accent);border-radius:3px;margin-top:9px}',
+    '.kc-auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;padding:4px;background:var(--kc-auth-soft);border-radius:10px}.kc-auth-tab{height:39px;border:1px solid transparent;background:transparent;color:var(--text2,#718177);border-radius:8px;font:inherit;font-weight:900;cursor:pointer;transition:transform .16s ease,background .16s ease,color .16s ease,box-shadow .16s ease}.kc-auth-tab:hover{transform:translateY(-1px);background:var(--kc-auth-hover);color:var(--text,#16342c)}.kc-auth-tab.active{background:var(--kc-auth-accent);color:#fff;border-color:transparent;box-shadow:0 8px 18px var(--kc-auth-soft)}',
+    '.kc-auth-form{display:none}.kc-auth-form.active{display:block;animation:kcFormIn .18s ease both}@keyframes kcFormIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}.kc-auth-field{display:flex;flex-direction:column;gap:6px;margin-bottom:11px;font-size:12px;font-weight:900}.kc-auth-field input{height:43px;border:1px solid var(--border,#dde8e1);border-radius:9px;padding:0 12px;background:var(--kc-auth-field);color:var(--text,#16342c);font:inherit;outline:none;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease,background .16s ease}.kc-auth-field input:hover{transform:translateY(-1px);border-color:var(--kc-auth-accent);background:var(--kc-auth-field)}.kc-auth-field input:focus{border-color:var(--kc-auth-accent);box-shadow:0 0 0 3px var(--kc-auth-soft)}',
+    '.kc-auth-submit{width:100%;height:44px;border:0;border-radius:9px;background:var(--kc-auth-accent);color:#fff;font:inherit;font-weight:900;cursor:pointer;margin-top:6px;box-shadow:0 12px 24px var(--kc-auth-soft);transition:transform .16s ease,filter .16s ease,box-shadow .16s ease,background .16s ease}.kc-auth-submit:hover{filter:brightness(1.05);transform:translateY(-2px);box-shadow:0 16px 30px var(--kc-auth-soft);background:var(--kc-auth-accent-2)}.kc-auth-submit:active{transform:translateY(0) scale(.99)}',
+    '.kc-auth-error{display:none;margin:0 0 11px;padding:10px 11px;border-radius:9px;background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.28);font-size:12px;font-weight:800;line-height:1.55}.kc-auth-error.show{display:block;animation:kcErrorIn .18s ease both}@keyframes kcErrorIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}',
+    '.kc-profile-box{position:relative;display:flex;align-items:center;gap:9px;width:100%;padding:8px;border-radius:8px;cursor:pointer;font-family:var(--font,Sarabun,sans-serif);transition:background .16s ease,transform .16s ease,box-shadow .16s ease}.kc-profile-box:hover{background:var(--kc-auth-hover,rgba(127,147,172,.12));transform:translateY(-1px)}.kc-profile-box.float{position:fixed;top:12px;right:12px;z-index:60;width:auto;min-width:190px;background:var(--bg2,#fff);border:1px solid var(--border,#dde8e1);box-shadow:0 12px 30px rgba(0,0,0,.16)}.kc-profile-box.float:hover{box-shadow:0 16px 34px rgba(0,0,0,.22)}',
+    '.kc-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--kc-auth-accent,var(--green,#06C755));color:#fff;font-size:12px;font-weight:900;flex-shrink:0;transition:transform .16s ease}.kc-profile-box:hover .kc-avatar{transform:scale(1.05)}.kc-profile-name{font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}.kc-profile-email{font-size:10px;color:var(--text2,#718177);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}',
+    '.kc-profile-menu{display:none;position:absolute;left:8px;right:8px;bottom:calc(100% + 8px);background:var(--bg2,#fff);color:var(--text,#16342c);border:1px solid var(--border,#dde8e1);border-radius:9px;padding:11px;box-shadow:0 16px 38px rgba(0,0,0,.24);min-width:210px}.kc-profile-box.float .kc-profile-menu{left:auto;right:0;bottom:auto;top:calc(100% + 8px)}.kc-profile-box.open .kc-profile-menu{display:block;animation:kcMenuIn .16s ease both}@keyframes kcMenuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}',
+    '.kc-logout-btn{width:100%;margin-top:9px;height:36px;border-radius:7px;border:1px solid rgba(248,113,113,.32);background:rgba(248,113,113,.1);color:#f87171;font:inherit;font-size:12px;font-weight:900;cursor:pointer;transition:background .16s ease,transform .16s ease}.kc-logout-btn:hover{background:rgba(248,113,113,.18);transform:translateY(-1px)}'
+  ].join('');
+  document.head.insertAdjacentHTML('beforeend', '<style>'+css+'</style>');
+
+  document.body.insertAdjacentHTML('beforeend',
+    '<div class="kc-auth-screen '+role+'" id="kc-auth-screen"><div class="kc-auth-card" id="kc-auth-card">'+
+    '<h2 class="kc-auth-title">KaenConnect</h2>'+
+    '<p class="kc-auth-sub">'+(role === 'staff' ? 'เข้าสู่ระบบสำหรับเจ้าหน้าที่ Dashboard' : 'เข้าสู่ระบบสำหรับผู้ยื่นคำร้อง')+'</p>'+
+    '<div class="kc-auth-tabs"><button type="button" class="kc-auth-tab active" data-auth-tab="login">Login</button><button type="button" class="kc-auth-tab" data-auth-tab="register">ลงทะเบียน</button></div>'+
+    '<div class="kc-auth-error" id="kc-auth-error"></div>'+
+    '<form class="kc-auth-form active" id="kc-login-form"><label class="kc-auth-field">Username<input name="username" autocomplete="username" required></label><label class="kc-auth-field">Password<input name="password" type="password" autocomplete="current-password" required></label><button class="kc-auth-submit">Login</button></form>'+
+    '<form class="kc-auth-form" id="kc-register-form"><label class="kc-auth-field">อีเมล<input name="email" type="email" autocomplete="email" required></label><label class="kc-auth-field">Username<input name="username" autocomplete="username" required></label><label class="kc-auth-field">Password<input name="password" type="password" autocomplete="new-password" minlength="4" required></label><button class="kc-auth-submit">ลงทะเบียนและเข้าสู่ระบบ</button></form>'+
+    '</div></div>');
+
+  function showError(message){
+    const el=document.getElementById('kc-auth-error');
+    const messages=Array.isArray(message)?message:[message];
+    el.innerHTML=messages.map(escapeAuthHtml).join('<br>');
+    el.classList.add('show');
+    const card=document.getElementById('kc-auth-card');
+    if(card){ card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
+  }
+  function clearError(){ const el=document.getElementById('kc-auth-error'); el.textContent=''; el.classList.remove('show'); }
+  function authAreaName(){ return role === 'staff' ? 'Dashboard' : 'หน้าคำร้อง'; }
+  function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+  function passwordErrors(password){
+    const errors=[];
+    if(!password)errors.push('กรุณากรอก Password');
+    if(password&&password.length<4)errors.push('Password ต้องมีอย่างน้อย 4 ตัวอักษร');
+    if(/\s/.test(password))errors.push('Password ห้ามมีช่องว่าง');
+    return errors;
+  }
+  function setAuthMode(mode){
+    clearError();
+    document.querySelectorAll('.kc-auth-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.authTab === mode));
+    document.getElementById('kc-login-form').classList.toggle('active', mode === 'login');
+    document.getElementById('kc-register-form').classList.toggle('active', mode === 'register');
+  }
+  function renderProfile(){
+    const session = getSession();
+    const authScreen = document.getElementById('kc-auth-screen');
+    authScreen.classList.toggle('show', !session);
+    const oldProfile = document.getElementById('kc-profile-box');
+    if (!session) { if (oldProfile) oldProfile.remove(); return; }
+    const host = document.querySelector('.sidebar-foot') || document.querySelector('.topbar') || document.querySelector('header') || document.body;
+    const floating = host === document.body;
+    if (host.classList && host.classList.contains('sidebar-foot')) host.innerHTML = '';
+    let profile = document.getElementById('kc-profile-box');
+    if (!profile) { profile = document.createElement('div'); profile.id = 'kc-profile-box'; host.appendChild(profile); }
+    const nameText = escapeAuthHtml(session.username);
+    const emailText = escapeAuthHtml(session.email);
+    const roleText = role === 'staff' ? 'เจ้าหน้าที่ระบบ' : 'ผู้ยื่นคำร้อง';
+    profile.className = 'kc-profile-box' + (floating ? ' float' : '');
+    profile.innerHTML = '<div class="kc-avatar">'+escapeAuthHtml(initials(session.username))+'</div><div style="flex:1;min-width:0"><div class="kc-profile-name">'+nameText+'</div><div class="kc-profile-email">'+emailText+'</div></div><div class="kc-profile-menu"><div class="kc-profile-name">'+nameText+'</div><div class="kc-profile-email">'+emailText+'</div><div class="kc-profile-email" style="margin-top:3px">'+roleText+'</div><button class="kc-logout-btn" data-kc-logout>Logout</button></div>';
+  }
+  document.addEventListener('click', function(e){
+    const tab = e.target.closest('[data-auth-tab]');
+    if (tab) { setAuthMode(tab.dataset.authTab); return; }
+    const logout = e.target.closest('[data-kc-logout]');
+    if (logout) { clearSession(); renderProfile(); setAuthMode('login'); return; }
+    const profile = e.target.closest('#kc-profile-box');
+    if (profile) { profile.classList.toggle('open'); return; }
+    document.getElementById('kc-profile-box')?.classList.remove('open');
+  });
+  document.getElementById('kc-register-form').addEventListener('submit', function(e){
+    e.preventDefault(); clearError();
+    const fd = new FormData(e.target);
+    const email = String(fd.get('email') || '').trim().toLowerCase();
+    const username = String(fd.get('username') || '').trim();
+    const password = String(fd.get('password') || '');
+    const errors=[];
+    if(!email)errors.push('กรุณากรอกอีเมล');
+    else if(!isValidEmail(email))errors.push('รูปแบบอีเมลไม่ถูกต้อง เช่น name@example.com');
+    if(!username)errors.push('กรุณากรอก Username');
+    else if(username.length<2)errors.push('Username ต้องมีอย่างน้อย 2 ตัวอักษร');
+    errors.push(...passwordErrors(password));
+    if(errors.length){ showError(errors); return; }
+    const users = getUsers();
+    const usernameKey = username.toLowerCase();
+    const emailUsed = Object.values(users).some(user => user.email === email);
+    if (users[usernameKey]) { showError('Username นี้ลงทะเบียนไว้แล้วใน '+authAreaName()+' กรุณา Login แทน'); setAuthMode('login'); return; }
+    if (emailUsed) { showError('อีเมลนี้ลงทะเบียนไว้แล้วใน '+authAreaName()+' กรุณาใช้อีเมลอื่นหรือ Login ด้วย Username เดิม'); return; }
+    const user = { email, username, password, createdAt:new Date().toISOString() };
+    users[usernameKey] = user; saveUsers(users); setSession(user); e.target.reset(); renderProfile();
+  });
+  document.getElementById('kc-login-form').addEventListener('submit', function(e){
+    e.preventDefault(); clearError();
+    const fd = new FormData(e.target);
+    const username = String(fd.get('username') || '').trim();
+    const password = String(fd.get('password') || '');
+    const errors=[];
+    if(!username)errors.push('กรุณากรอก Username');
+    if(!password)errors.push('กรุณากรอก Password');
+    if(errors.length){ showError(errors); return; }
+    const usernameKey = username.toLowerCase();
+    const user = getUsers()[usernameKey];
+    if (!user) { showError('ไม่พบบัญชี Username นี้ใน '+authAreaName()+' หากยังไม่เคยลงทะเบียนในหน้านี้ กรุณากดแท็บลงทะเบียนก่อน'); return; }
+    if (user.password !== password) { showError('Password ไม่ถูกต้อง กรุณาตรวจสอบตัวพิมพ์เล็ก/ใหญ่และลองอีกครั้ง'); return; }
+    setSession(user); e.target.reset(); renderProfile();
+  });
+  renderProfile();
+})();
+</script>
 </body>
 </html>
