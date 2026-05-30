@@ -28,7 +28,8 @@ body.dark-mode{
 body{font-family:'Sarabun',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);font-size:15px;transition:background .2s,color .2s;}
 
 .header{background:#0F6E56;padding:18px 20px;display:flex;align-items:center;gap:12px;}
-.header-logo{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.header-logo{width:42px;height:42px;border-radius:50%;background:#fff;border:2px solid rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;box-shadow:0 8px 20px rgba(0,0,0,.16);}
+.header-logo img{width:100%;height:100%;object-fit:cover;display:block;}
 .header h1{color:#fff;font-size:17px;font-weight:700;line-height:1.3;}
 .header p{color:rgba(255,255,255,.65);font-size:12px;margin-top:1px;}
 
@@ -60,6 +61,10 @@ body.dark-mode select:disabled{background:#17202b;color:#60758c;}
 .zone-2{background:#e1f5ee;color:#0a5540;}
 .zone-3{background:#fff3e0;color:#8a4500;}
 .zone-4{background:#fce4ec;color:#8b0030;}
+body.dark-mode .zone-1{background:#e8f0fe;color:#1a4fa8;}
+body.dark-mode .zone-2{background:#e1f5ee;color:#0a5540;}
+body.dark-mode .zone-3{background:#fff3e0;color:#8a4500;}
+body.dark-mode .zone-4{background:#fce4ec;color:#8b0030;}
 .zone-x{background:#f3f4f6;color:#6b7280;}
 body.dark-mode .zone-x{background:#1e2a3a;color:#9fb3c8;}
 .community-count{font-size:11px;color:var(--green-deep);font-weight:600;margin-top:3px;}
@@ -100,6 +105,7 @@ body.dark-mode .step+.step{border-top-color:rgba(255,255,255,.08);}
 .s-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:#f5f5f5;transition:background .3s;}
 body.dark-mode .s-ico{background:#1e2a3a;}
 .s-ico.act{background:#fff8e1;animation:np .7s ease infinite alternate;}
+body.dark-mode .s-ico.act{background:#fff8e1;color:#8a4500;}
 .s-ico.done{background:var(--green-light);}
 @keyframes np{to{background:#fff0a0;}}
 .s-info{flex:1;}
@@ -128,6 +134,8 @@ body.dark-mode .r-row+.r-row{border-top-color:rgba(255,255,255,.08);}
 .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
 .tag-g{background:#e1f5ee;color:#0a5540;}
 .tag-o{background:#fff3e0;color:#8a4500;}
+body.dark-mode .tag-g{background:#e1f5ee;color:#0a5540;}
+body.dark-mode .tag-o{background:#fff3e0;color:#8a4500;}
 
 .btn-p{display:block;width:100%;padding:13px;background:var(--green-deep);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;margin-bottom:8px;transition:background .15s;}
 .btn-p:hover{background:var(--green);}
@@ -173,6 +181,10 @@ body.dark-mode .r-row+.r-row{border-top-color:rgba(255,255,255,.08);}
 .sp-prog{background:#e6f1fb;color:#185fa5;}
 .sp-wait{background:#faeeda;color:#8a4500;}
 .sp-late{background:#fce4ec;color:#8b0030;}
+body.dark-mode .sp-done{background:#e1f5ee;color:#0a5540;}
+body.dark-mode .sp-prog{background:#e6f1fb;color:#185fa5;}
+body.dark-mode .sp-wait{background:#faeeda;color:#8a4500;}
+body.dark-mode .sp-late{background:#fce4ec;color:#8b0030;}
 
 .track-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0;}
 .track-info-item{padding:12px 18px;border-bottom:1px solid var(--border);}
@@ -190,6 +202,7 @@ body.dark-mode .r-row+.r-row{border-top-color:rgba(255,255,255,.08);}
 .tl-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;z-index:1;border:2px solid transparent;}
 .tl-done{background:var(--green-light);border-color:var(--green);color:var(--green-deep);}
 .tl-active{background:#fff8e1;border-color:#f59e0b;color:#8a4500;animation:pulse-tl 1.5s infinite;}
+body.dark-mode .tl-active{background:#fff8e1;color:#8a4500;}
 .tl-wait{background:#f5f7f5;border-color:var(--border);color:var(--gray);}
 @keyframes pulse-tl{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
 .tl-content{flex:1;padding-top:6px;}
@@ -202,6 +215,10 @@ body.dark-mode .tl-step-desc{color:#9fb3c8;}
 .eta-track-box .eta-ico{font-size:22px;}
 .eta-track-label{font-size:12px;color:var(--green-deep);margin-bottom:3px;}
 .eta-track-date{font-size:16px;font-weight:800;color:var(--green-deep);}
+body.dark-mode .eta-track-box[style*="background:#e1f5ee"] .eta-track-label,
+body.dark-mode .eta-track-box[style*="background:#e1f5ee"] .eta-track-date{color:#0a5540;}
+body.dark-mode .eta-track-box[style*="background:#faeeda"] .eta-track-label,
+body.dark-mode .eta-track-box[style*="background:#faeeda"] .eta-track-date{color:#8a4500;}
 
 .back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--green-deep);background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:600;margin-bottom:16px;}
 .back-btn:hover{text-decoration:underline;}
@@ -210,6 +227,12 @@ body.dark-mode .tl-step-desc{color:#9fb3c8;}
 .theme-toggle:hover{transform:translateY(-2px);border-color:var(--green-mid);background:var(--green-light);}
 .theme-toggle:active{transform:translateY(0) scale(.97);}
 body.dark-mode .theme-toggle{box-shadow:0 14px 32px rgba(0,0,0,.42);}
+body.dark-mode .kc-profile-box.float{color:#1e2a24;}
+body.dark-mode .kc-profile-box.float .kc-profile-name{color:#1e2a24;}
+body.dark-mode .kc-profile-box.float .kc-profile-email{color:#718177;}
+body.dark-mode .kc-profile-box.float .kc-profile-menu{color:#1e2a24;}
+body.dark-mode .kc-profile-box.float .kc-profile-menu .kc-profile-name{color:#1e2a24;}
+body.dark-mode .kc-profile-box.float .kc-profile-menu .kc-profile-email{color:#718177;}
 
 @media(min-width:480px){
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -220,14 +243,14 @@ body.dark-mode .theme-toggle{box-shadow:0 14px 32px rgba(0,0,0,.42);}
 <body>
 
 <div class="header">
-  <div class="header-logo">KC</div>
+  <div class="header-logo"><img src="assets/kaenconnect-logo.jpg" alt="KaenConnect"></div>
   <div>
     <h1>KaenConnect</h1>
     <p>ระบบรับคำร้องเรียนเทศบาลนครขอนแก่น</p>
   </div>
 </div>
 
-<button class="theme-toggle" id="theme-toggle" type="button" onclick="toggleThemeMode()" aria-label="สลับโหมดสี">🌙</button>
+<button class="theme-toggle" id="theme-toggle" type="button" onclick="toggleThemeMode()" aria-label="สลับโหมดสี">☾</button>
 
 <!-- PAGE: FORM -->
 <div id="page-form">
@@ -548,7 +571,7 @@ function applyThemeMode(mode){
   document.body.classList.toggle('dark-mode',dark);
   const btn=document.getElementById('theme-toggle');
   if(btn){
-    btn.textContent=dark?'☀':'🌙';
+    btn.textContent=dark?'☀':'☾';
     btn.setAttribute('aria-label',dark?'เปลี่ยนเป็นโหมดสว่าง':'เปลี่ยนเป็นโหมดมืด');
     btn.title=dark?'เปลี่ยนเป็นโหมดสว่าง':'เปลี่ยนเป็นโหมดมืด';
   }
