@@ -16,8 +16,16 @@
   --amber:#ba7517; --amber-light:#faeeda;
   --radius:12px;
 }
+body.dark-mode{
+  --green:#34d399; --green-dark:#10b981; --green-deep:#34d399;
+  --green-light:rgba(52,211,153,.12); --green-mid:rgba(52,211,153,.36);
+  --border:rgba(255,255,255,.11); --bg:#0b0f14; --white:#111820;
+  --gray:#7a93ac; --text:#dce8f5; --red:#f87171;
+  --blue:#4fa3e0; --blue-light:rgba(79,163,224,.12);
+  --amber:#f59e0b; --amber-light:rgba(245,158,11,.13);
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Sarabun',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);font-size:15px;}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);font-size:15px;transition:background .2s,color .2s;}
 
 .header{background:#0F6E56;padding:18px 20px;display:flex;align-items:center;gap:12px;}
 .header-logo{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
@@ -32,8 +40,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);min-height:100vh;colo
 .form-group{margin-bottom:12px;}
 .form-group:last-child{margin-bottom:0;}
 label{display:block;font-size:13px;font-weight:600;color:#4a5568;margin-bottom:4px;}
+body.dark-mode label{color:#b7c7d8;}
 label .req{color:var(--red);}
 input,select,textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;}
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:#0b0f14;color:var(--text);}
 input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(6,199,85,.1);}
 textarea{min-height:96px;resize:vertical;line-height:1.6;}
 .form-row{display:flex;flex-direction:column;gap:10px;}
@@ -41,6 +51,7 @@ textarea{min-height:96px;resize:vertical;line-height:1.6;}
 .err.show{display:block;}
 input.e,select.e,textarea.e{border-color:var(--red);}
 select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
+body.dark-mode select:disabled{background:#17202b;color:#60758c;}
 
 .community-hint{font-size:11px;color:var(--gray);margin-top:3px;display:flex;align-items:center;gap:4px;}
 .community-hint.hidden{display:none;}
@@ -50,8 +61,10 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
 .zone-3{background:#fff3e0;color:#8a4500;}
 .zone-4{background:#fce4ec;color:#8b0030;}
 .zone-x{background:#f3f4f6;color:#6b7280;}
+body.dark-mode .zone-x{background:#1e2a3a;color:#9fb3c8;}
 .community-count{font-size:11px;color:var(--green-deep);font-weight:600;margin-top:3px;}
 .unknown-hint{display:none;margin-top:6px;background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:8px 10px;font-size:12px;color:#7a5c00;line-height:1.6;}
+body.dark-mode .unknown-hint{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.34);color:#fbbf24;}
 .unknown-hint.show{display:block;}
 
 .submit-btn{width:100%;padding:13px;background:var(--green-deep);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s;margin-bottom:10px;}
@@ -76,13 +89,16 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
 
 .prog-wrap{padding:12px 16px;border-bottom:1px solid var(--border);}
 .prog-bar{height:4px;background:#eef2ef;border-radius:2px;overflow:hidden;}
+body.dark-mode .prog-bar{background:#1e2a3a;}
 .prog-fill{height:100%;background:var(--green);border-radius:2px;width:0%;transition:width .5s ease;}
 
 .steps{padding:8px 16px 14px;}
 .step{display:flex;align-items:center;gap:12px;padding:9px 0;opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s;}
 .step.vis{opacity:1;transform:translateY(0);}
 .step+.step{border-top:1px solid #f2f5f3;}
+body.dark-mode .step+.step{border-top-color:rgba(255,255,255,.08);}
 .s-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:#f5f5f5;transition:background .3s;}
+body.dark-mode .s-ico{background:#1e2a3a;}
 .s-ico.act{background:#fff8e1;animation:np .7s ease infinite alternate;}
 .s-ico.done{background:var(--green-light);}
 @keyframes np{to{background:#fff0a0;}}
@@ -104,6 +120,7 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
 .r-body{padding:4px 0;}
 .r-row{display:flex;align-items:center;padding:11px 16px;gap:10px;}
 .r-row+.r-row{border-top:1px solid #f4f7f5;}
+body.dark-mode .r-row+.r-row{border-top-color:rgba(255,255,255,.08);}
 .r-ico{font-size:16px;width:22px;flex-shrink:0;}
 .r-ico:empty,.eta-ico:empty{display:none;}
 .r-label{font-size:12px;color:var(--gray);width:90px;flex-shrink:0;}
@@ -121,6 +138,21 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
 /* TRACKING PAGE */
 #page-tracking{display:none;}
 
+.track-tabbar{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.track-tab{border:1px solid var(--border);background:var(--white);color:var(--green-deep);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:all .16s;}
+.track-tab:hover{background:var(--green-light);border-color:var(--green-mid);transform:translateY(-1px);}
+.track-tab.active{background:var(--green-deep);border-color:var(--green-deep);color:#fff;box-shadow:0 8px 18px rgba(15,110,86,.16);}
+.track-panel{display:none;}
+.track-panel.active{display:block;animation:fadeIn .18s ease both;}
+.my-ticket-list{display:flex;flex-direction:column;gap:10px;}
+.my-ticket-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .16s;}
+.my-ticket-card:hover{border-color:var(--green-mid);box-shadow:0 10px 24px rgba(15,110,86,.1);transform:translateY(-1px);}
+.my-ticket-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}
+.my-ticket-id{font-family:monospace;font-size:15px;font-weight:800;color:var(--green-deep);}
+.my-ticket-status{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;background:var(--green-light);color:var(--green-deep);white-space:nowrap;}
+.my-ticket-title{font-size:14px;font-weight:800;margin-bottom:4px;}
+.my-ticket-meta{font-size:12px;color:var(--gray);line-height:1.6;}
+.my-ticket-empty{background:var(--white);border:1px dashed var(--border);border-radius:12px;padding:24px 18px;text-align:center;color:var(--gray);font-size:13px;line-height:1.7;}
 .track-input-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px 20px;margin-bottom:12px;}
 .track-input-card .sec-title{margin-bottom:20px;}
 .track-search-row{display:flex;gap:10px;margin-top:14px;}
@@ -164,6 +196,7 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
 .tl-step-title{font-size:13px;font-weight:700;margin-bottom:2px;}
 .tl-step-date{font-size:11px;color:var(--gray);}
 .tl-step-desc{font-size:12px;color:#555;margin-top:4px;line-height:1.5;}
+body.dark-mode .tl-step-desc{color:#9fb3c8;}
 
 .eta-track-box{background:var(--green-light);border:1px solid #9FE1CB;border-radius:10px;padding:14px 16px;margin-top:12px;display:flex;align-items:center;gap:12px;}
 .eta-track-box .eta-ico{font-size:22px;}
@@ -172,6 +205,11 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
 
 .back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--green-deep);background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:600;margin-bottom:16px;}
 .back-btn:hover{text-decoration:underline;}
+
+.theme-toggle{position:fixed;right:16px;bottom:16px;z-index:100001;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--white);color:var(--green-deep);box-shadow:0 12px 28px rgba(0,0,0,.16);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .16s,background .16s,border-color .16s,color .16s;}
+.theme-toggle:hover{transform:translateY(-2px);border-color:var(--green-mid);background:var(--green-light);}
+.theme-toggle:active{transform:translateY(0) scale(.97);}
+body.dark-mode .theme-toggle{box-shadow:0 14px 32px rgba(0,0,0,.42);}
 
 @media(min-width:480px){
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -188,6 +226,8 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
     <p>ระบบรับคำร้องเรียนเทศบาลนครขอนแก่น</p>
   </div>
 </div>
+
+<button class="theme-toggle" id="theme-toggle" type="button" onclick="toggleThemeMode()" aria-label="สลับโหมดสี">🌙</button>
 
 <!-- PAGE: FORM -->
 <div id="page-form">
@@ -318,6 +358,12 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
     ← กลับหน้าหลัก
   </button>
 
+  <div class="track-tabbar">
+    <button class="track-tab active" id="track-tab-search" onclick="setTrackTab('search')">ติดตามคำร้องเรียน</button>
+    <button class="track-tab" id="track-tab-mine" onclick="setTrackTab('mine')">คำร้องเรียนของฉัน</button>
+  </div>
+
+  <div class="track-panel active" id="track-panel-search">
   <div class="track-input-card">
     <div class="sec-title">ติดตามสถานะคำร้อง</div>
     <p style="font-size:13px;color:var(--gray);margin-bottom:4px;">กรอกเลขที่คำร้องเพื่อตรวจสอบสถานะปัจจุบัน</p>
@@ -383,6 +429,15 @@ select:disabled{background:#f5f7f5;color:var(--gray);cursor:not-allowed;}
 
     <button class="btn-s" onclick="clearTrack()">ค้นหาคำร้องอื่น</button>
 
+  </div>
+  </div>
+
+  <div class="track-panel" id="track-panel-mine">
+    <div class="track-input-card">
+      <div class="sec-title">คำร้องเรียนของฉัน</div>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">รายการคำร้องเรียนที่ยื่นด้วยบัญชีนี้ ระบบจะเก็บไว้ให้เรียกดูได้หลังจากปิดเว็บหรือรีเฟรชหน้า</p>
+      <div class="my-ticket-list" id="my-ticket-list"></div>
+    </div>
   </div>
 
 </div>
@@ -472,9 +527,37 @@ const SHARED_TICKET_KEY='bdi_shared_tickets_v1';
 const DASHBOARD_TICKET_KEY='bdi_dashboard_tickets_v1';
 const DELETED_TICKET_KEY='bdi_deleted_ticket_ids_v1';
 const TICKET_SEQUENCE_KEY='bdi_ticket_sequence_v1';
+const CITIZEN_SESSION_KEY='kc_session_citizen_v1';
+const THEME_KEY='kc_citizen_theme_v1';
 
 function safeJsonParse(value,fallback){
   try{return value?JSON.parse(value):fallback;}catch(e){return fallback;}
+}
+
+function getCurrentCitizenSession(){
+  return safeJsonParse(localStorage.getItem(CITIZEN_SESSION_KEY),null);
+}
+
+function getCurrentCitizenKey(){
+  const session=getCurrentCitizenSession();
+  return session&&session.username?String(session.username).trim().toLowerCase():'';
+}
+
+function applyThemeMode(mode){
+  const dark=mode==='dark';
+  document.body.classList.toggle('dark-mode',dark);
+  const btn=document.getElementById('theme-toggle');
+  if(btn){
+    btn.textContent=dark?'☀':'🌙';
+    btn.setAttribute('aria-label',dark?'เปลี่ยนเป็นโหมดสว่าง':'เปลี่ยนเป็นโหมดมืด');
+    btn.title=dark?'เปลี่ยนเป็นโหมดสว่าง':'เปลี่ยนเป็นโหมดมืด';
+  }
+}
+
+function toggleThemeMode(){
+  const next=document.body.classList.contains('dark-mode')?'light':'dark';
+  localStorage.setItem(THEME_KEY,next);
+  applyThemeMode(next);
 }
 
 function loadSharedTickets(){
@@ -558,6 +641,7 @@ function handleSubmit(){
   _lastTicketNo=ticket;
   const now=new Date();
   const eta=new Date();eta.setDate(eta.getDate()+result.days);
+  const session=getCurrentCitizenSession();
   const zoneLabel=zoneVal==='unknown'?'ไม่ทราบเขต':'เขต '+zoneVal;
   const commLabel=community==='unknown'?'ไม่ทราบชุมชน':community;
   _lastResult={
@@ -578,6 +662,10 @@ function handleSubmit(){
     priority:result.priority,
     issueCode:result.code,
     matchedKeyword:result.matched,
+    ownerRole:'citizen',
+    ownerUsername:session&&session.username?String(session.username).trim().toLowerCase():'',
+    ownerDisplayName:session&&session.username?session.username:'',
+    ownerEmail:session&&session.email?session.email:'',
     isNew:true
   };
   saveSharedTicket(_lastResult);
@@ -655,6 +743,7 @@ function showTrackPage(){
   document.getElementById('page-tracking').style.display='block';
   document.getElementById('track-result').style.display='none';
   document.getElementById('track-not-found').style.display='none';
+  setTrackTab('search');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -665,6 +754,57 @@ function backToForm(){
 }
 
 function quickTrack(id){
+  setTrackTab('search');
+  document.getElementById('track-input').value=id;
+  doTrack();
+}
+
+function setTrackTab(tab){
+  const isMine=tab==='mine';
+  document.getElementById('track-tab-search').classList.toggle('active',!isMine);
+  document.getElementById('track-tab-mine').classList.toggle('active',isMine);
+  document.getElementById('track-panel-search').classList.toggle('active',!isMine);
+  document.getElementById('track-panel-mine').classList.toggle('active',isMine);
+  if(isMine)renderMyComplaints();
+}
+
+function getAllTrackableTickets(){
+  return {...DATASET_SAMPLE,...loadDashboardTickets(),...loadSharedTickets()};
+}
+
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function getMyComplaintRecords(){
+  const ownerKey=getCurrentCitizenKey();
+  if(!ownerKey)return[];
+  return Object.values(getAllTrackableTickets())
+    .filter(item=>item&&String(item.ownerUsername||'').trim().toLowerCase()===ownerKey)
+    .sort((a,b)=>String(b.id||'').localeCompare(String(a.id||''),'th',{numeric:true}));
+}
+
+function renderMyComplaints(){
+  const list=document.getElementById('my-ticket-list');
+  if(!list)return;
+  const rows=getMyComplaintRecords();
+  if(!rows.length){
+    list.innerHTML='<div class="my-ticket-empty">ยังไม่มีคำร้องเรียนที่ผูกกับบัญชีนี้<br>เมื่อยื่นคำร้องใหม่ ระบบจะแสดงเลขคำร้องในหน้านี้โดยอัตโนมัติ</div>';
+    return;
+  }
+  list.innerHTML=rows.map(item=>`
+    <div class="my-ticket-card" onclick="openMyComplaint('${String(item.id).replace(/'/g,"\\'")}')">
+      <div class="my-ticket-top">
+        <div class="my-ticket-id">${escapeHtml(item.id)}</div>
+        <div class="my-ticket-status">${escapeHtml(item.status||'กำลังดำเนินการ')}</div>
+      </div>
+      <div class="my-ticket-title">${escapeHtml(item.type||item.subject||'คำร้องเรียน')}</div>
+      <div class="my-ticket-meta">${escapeHtml(item.date||'-')} · ${escapeHtml(item.zone||'ไม่ระบุเขต')} / ${escapeHtml(item.comm||'ไม่ระบุชุมชน')}</div>
+    </div>`).join('');
+}
+
+function openMyComplaint(id){
+  setTrackTab('search');
   document.getElementById('track-input').value=id;
   doTrack();
 }
@@ -810,6 +950,7 @@ function doTrack(){
 
 // Enter key support
 document.addEventListener('DOMContentLoaded',function(){
+  applyThemeMode(localStorage.getItem(THEME_KEY)||'light');
   const ti=document.getElementById('track-input');
   if(ti)ti.addEventListener('keypress',function(e){if(e.key==='Enter')doTrack();});
 });
