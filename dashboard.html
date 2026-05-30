@@ -253,6 +253,55 @@ tbody tr.sel{background:rgba(79,163,224,.06)}
 .pro-tag{font-size:11px;padding:3px 8px;border-radius:4px;background:var(--bg3);color:var(--text2)}
 .rec-box{background:var(--teal-bg);border:1px solid rgba(34,211,238,.2);border-radius:6px;padding:10px 12px;margin-top:8px;font-size:12px;color:var(--teal);line-height:1.6}
 
+/* AI Chatbot */
+.ai-chat-shell{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px;min-height:calc(100vh - 96px)}
+.ai-chat-main,.ai-chat-side{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ai-chat-main{display:flex;flex-direction:column;min-height:620px}
+.ai-chat-head{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.ai-chat-kicker{font-size:10px;font-weight:800;color:var(--purple);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.ai-chat-title{font-size:17px;font-weight:800}
+.ai-chat-sub{font-size:12px;color:var(--text2);line-height:1.65;margin-top:3px}
+.ai-live{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(34,211,238,.24);background:var(--teal-bg);color:var(--teal);border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(34,211,238,.1)}
+.ai-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.ai-mini{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px}
+.ai-mini-lbl{font-size:10px;color:var(--text2);font-weight:700;margin-bottom:3px}
+.ai-mini-val{font-family:var(--mono);font-size:20px;font-weight:800}
+.ai-mini-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.ai-suggest{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--border)}
+.ai-chip{border:1px solid var(--border);background:var(--bg3);color:var(--text2);border-radius:20px;padding:6px 11px;font-size:12px;font-family:var(--font);font-weight:600;cursor:pointer;transition:all .15s}
+.ai-chip:hover{border-color:rgba(167,139,250,.34);color:var(--purple);background:var(--purple-bg);transform:translateY(-1px)}
+.ai-chat-log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,rgba(255,255,255,.012),transparent)}
+.ai-msg{display:flex;gap:10px;max-width:88%;animation:fadeUp .18s ease both}
+.ai-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.ai-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.ai-msg.bot .ai-avatar{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(167,139,250,.24)}
+.ai-msg.user .ai-avatar{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(79,163,224,.24)}
+.ai-bubble{border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.75;white-space:pre-line}
+.ai-msg.bot .ai-bubble{background:var(--bg3);color:var(--text)}
+.ai-msg.user .ai-bubble{background:var(--blue-bg);border-color:rgba(79,163,224,.25);color:var(--text)}
+.ai-chat-form{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg2)}
+.ai-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-family:var(--font);font-size:13px;outline:none}
+.ai-input:focus{border-color:rgba(167,139,250,.42);box-shadow:0 0 0 3px rgba(167,139,250,.08)}
+.ai-send{height:40px;border:0;border-radius:8px;background:var(--purple);color:#130b2e;font-weight:800;font-family:var(--font);padding:0 16px;cursor:pointer;transition:transform .15s,filter .15s;white-space:nowrap}
+.ai-send:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.ai-send:disabled{opacity:.55;cursor:wait;transform:none}
+.ai-chat-side{padding:16px;overflow-y:auto}
+.ai-side-sec{margin-bottom:16px}
+.ai-side-title{font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:9px}
+.ai-keybox{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px}
+.ai-keybox input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:11px;padding:8px;outline:none;margin-bottom:8px}
+.ai-keybox input:focus{border-color:rgba(167,139,250,.42)}
+.ai-keybox button{width:100%;border:1px solid rgba(167,139,250,.28);background:var(--purple-bg);color:var(--purple);border-radius:6px;padding:7px 10px;font-family:var(--font);font-weight:700;font-size:12px;cursor:pointer}
+.ai-help{font-size:10px;color:var(--text2);line-height:1.55;margin-top:7px}
+.ai-rank{display:flex;align-items:center;gap:9px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 10px;margin-bottom:7px}
+.ai-rank-n{width:22px;height:22px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--text2);flex-shrink:0}
+.ai-rank-body{min-width:0;flex:1}
+.ai-rank-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-rank-meta{font-size:10px;color:var(--text2)}
+.ai-rank-val{font-family:var(--mono);font-size:12px;color:var(--teal);font-weight:800}
+@media(max-width:980px){.ai-chat-shell{grid-template-columns:1fr}.ai-chat-side{order:-1}.ai-metrics{grid-template-columns:repeat(2,1fr)}}
+
 /* Trend sparkline */
 .sparkline{display:flex;align-items:flex-end;gap:2px;height:32px}
 .spark-bar{flex:1;border-radius:2px 2px 0 0;min-height:2px;transition:opacity .15s}
@@ -279,6 +328,7 @@ tbody tr.sel{background:rgba(79,163,224,.06)}
     <div class="ni" onclick="goPage('performance',this)"><span class="ni-icon"></span>ประสิทธิภาพ</div>
     <div class="ni" onclick="goPage('heatmap',this)"><span class="ni-icon"></span>แผนที่ความหนาแน่น</div>
     <div class="ni" onclick="goPage('proactive',this)"><span class="ni-icon"></span>Proactive Alert</div>
+    <div class="ni" onclick="goPage('chatbot',this)"><span class="ni-icon"></span>AI Chatbot</div>
   </div>
   <div class="sidebar-foot">
     <div class="user-row">
@@ -732,6 +782,65 @@ tbody tr.sel{background:rgba(79,163,224,.06)}
         </div>
       </div>
     </div><!-- /proactive -->
+
+    <!-- ═══ PAGE 6: AI CHATBOT ═══ -->
+    <div class="page" id="pg-chatbot">
+      <div class="ai-chat-shell">
+        <section class="ai-chat-main">
+          <div class="ai-chat-head">
+            <div>
+              <div class="ai-chat-kicker">Dashboard วิเคราะห์เรื่องร้องเรียน + AI Chatbot</div>
+              <div class="ai-chat-title">ผู้ช่วยวิเคราะห์ข้อมูลคำร้องเรียน</div>
+              <div class="ai-chat-sub">ระบบวิเคราะห์สถิติจริงจาก Dashboard ในเครื่องทันที เพื่อสรุป Insight และแนะนำแนวทางให้เจ้าหน้าที่โดยไม่ต้องเชื่อมต่อ API ภายนอก</div>
+            </div>
+            <div class="ai-live"><span class="ai-dot"></span>Local AI Demo</div>
+          </div>
+
+          <div class="ai-metrics" id="ai-metrics"></div>
+
+          <div class="ai-suggest">
+            <button class="ai-chip" onclick="askAiQuick('พื้นที่ไหนมีปัญหาสะสมมากที่สุด และควรจัดลำดับความเร่งด่วนอย่างไร?')">พื้นที่สะสมสูงสุด</button>
+            <button class="ai-chip" onclick="askAiQuick('เรื่องร้องเรียนประเภทถนนควรประสานงานกับหน่วยงานไหน?')">ปัญหาถนน</button>
+            <button class="ai-chip" onclick="askAiQuick('คำร้องประเภทไหนล่าช้าหรือค้างนานผิดปกติ?')">งานค้างนาน</button>
+            <button class="ai-chip" onclick="askAiQuick('ช่วยสรุปรายงานสำหรับผู้บริหารจากข้อมูลล่าสุด')">สรุปรายงาน</button>
+            <button class="ai-chip" onclick="askAiQuick('ปัญหาไฟฟ้าพบมากที่เขตไหนและควรจัดทีมอย่างไร?')">ไฟฟ้า</button>
+            <button class="ai-chip" onclick="askAiQuick('ปัญหาท่อระบายน้ำหรือน้ำท่วมควรเร่งพื้นที่ไหนก่อน?')">ท่อระบายน้ำ</button>
+            <button class="ai-chip" onclick="askAiQuick('คำร้องเกี่ยวกับขยะหรือสิ่งปฏิกูลมีแนวโน้มอย่างไร?')">ขยะ</button>
+            <button class="ai-chip" onclick="askAiQuick('งานต้นไม้หรือตัดกิ่งไม้ควรประสานฝ่ายไหน?')">ต้นไม้</button>
+            <button class="ai-chip" onclick="askAiQuick('งานอาคารและควบคุมการก่อสร้างมีความเสี่ยงล่าช้าหรือไม่?')">งานอาคาร</button>
+            <button class="ai-chip" onclick="askAiQuick('SLA ตอนนี้เป็นอย่างไร และควรปรับปรุงจุดไหน?')">SLA</button>
+            <button class="ai-chip" onclick="askAiQuick('ชุมชนใดเป็น Hotspot ที่ควรติดตามเป็นพิเศษ?')">ชุมชน Hotspot</button>
+            <button class="ai-chip" onclick="askAiQuick('ฝ่ายไหนมีเวลาเฉลี่ยสูงและควรติดตามก่อน?')">ฝ่ายล่าช้า</button>
+            <button class="ai-chip" onclick="askAiQuick('ส่วนงานใดควรรับผิดชอบคำร้องแต่ละประเภท?')">ส่วนงานรับผิดชอบ</button>
+            <button class="ai-chip" onclick="askAiQuick('ข้อมูลที่ไม่ระบุเขตหรือชุมชนมีมากแค่ไหนและควรแก้อย่างไร?')">ข้อมูลไม่ระบุ</button>
+            <button class="ai-chip" onclick="askAiQuick('ช่วยเสนอแผนดำเนินการ 7 วันจากข้อมูลล่าสุด')">แผน 7 วัน</button>
+            <button class="ai-chip" onclick="askAiQuick('แนวโน้มปัญหาหลักตอนนี้ควรเฝ้าระวังอะไร?')">แนวโน้ม</button>
+          </div>
+
+          <div class="ai-chat-log" id="ai-chat-log"></div>
+
+          <div class="ai-chat-form">
+            <input class="ai-input" id="ai-chat-input" placeholder="พิมพ์คำถาม เช่น เขตไหนควรเร่งแก้ไขก่อน" onkeydown="handleAiInputKey(event)">
+            <button class="ai-send" id="ai-send-btn" onclick="sendAiMessage()">ถาม AI</button>
+          </div>
+        </section>
+
+        <aside class="ai-chat-side">
+          <div class="ai-side-sec">
+            <div class="ai-side-title">พื้นที่ที่ควรติดตาม</div>
+            <div id="ai-zone-rank"></div>
+          </div>
+          <div class="ai-side-sec">
+            <div class="ai-side-title">ประเภทปัญหาที่พบบ่อย</div>
+            <div id="ai-type-rank"></div>
+          </div>
+          <div class="ai-side-sec">
+            <div class="ai-side-title">ฝ่ายที่ใช้เวลาเฉลี่ยสูง</div>
+            <div id="ai-fai-rank"></div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- /chatbot -->
 
   </div><!-- /page-area -->
 </div><!-- /content -->
@@ -7530,7 +7639,7 @@ document.getElementById('mc-chart').innerHTML = vals.map((v,i) => `
   </div>`).join('');
 
 // ─── NAVIGATION ───
-const pages = {overview:'ภาพรวม',complaints:'คำร้องทั้งหมด',performance:'ประสิทธิภาพ',heatmap:'แผนที่ความหนาแน่น',proactive:'Proactive Alert'};
+const pages = {overview:'ภาพรวม',complaints:'คำร้องทั้งหมด',performance:'ประสิทธิภาพ',heatmap:'แผนที่ความหนาแน่น',proactive:'Proactive Alert',chatbot:'AI Chatbot'};
 function toggleSidebar() {
   const shell = document.querySelector('.shell');
   shell.classList.toggle('sidebar-collapsed');
@@ -7544,6 +7653,7 @@ function goPage(id, el) {
   if (el) el.classList.add('active');
   document.getElementById('pt').textContent = pages[id] || id;
   if (id === 'complaints') renderTable();
+  if (id === 'chatbot') renderAiChatbot();
 }
 
 function applyHashRoute() {
@@ -7880,6 +7990,252 @@ function renderProactive() {
   });
 }
 
+let aiChatReady = false;
+
+function topItemsByCount(items, keyFn, limit = 5) {
+  return sortedEntries(countBy(items, keyFn), (key, value) => ({ key, value })).slice(0, limit);
+}
+
+function buildAiContext() {
+  const stats = getDashboardStats();
+  const rows = DATA.slice();
+  const topZones = topItemsByCount(rows, x => x.zone, 6);
+  const topTypes = topItemsByCount(rows, x => x.type || x.subject, 8);
+  const topCats = topItemsByCount(rows, x => catLabel[x.cat] || x.cat || x.type, 6);
+  const topCommunities = topItemsByCount(rows.filter(x => x.comm && !String(x.comm).includes('ไม่ระบุ')), x => x.comm, 6);
+  const deptAvg = sortedEntries(groupBy(rows, x => x.dept), (key, items) => ({ key, count: items.length, value: avgDays(items), late: items.filter(isLateTicket).length })).slice(0, 6);
+  const faiAvg = sortedEntries(groupBy(rows, x => x.fai), (key, items) => ({ key, count: items.length, value: avgDays(items), late: items.filter(isLateTicket).length })).slice(0, 8);
+  const activeRows = rows.filter(isActiveTicket).slice(0, 12);
+  const lateRows = rows.filter(isLateTicket).sort((a, b) => (numberValue(b.days) || 0) - (numberValue(a.days) || 0)).slice(0, 12);
+  return {
+    summary: {
+      total: stats.total,
+      today: stats.today,
+      thisMonth: stats.month,
+      done: stats.done,
+      active: stats.active,
+      late: stats.late,
+      averageDays: Number(formatNumber(stats.avg, 1)),
+      medianDays: Number(formatNumber(stats.median, 1)),
+      slaWithin20DaysPercent: Number(formatNumber(stats.sla, 1))
+    },
+    topZones,
+    topTypes,
+    topCategories: topCats,
+    topCommunities,
+    departmentAverageDays: deptAvg,
+    teamAverageDays: faiAvg,
+    activeTickets: activeRows.map(x => pickTicketForAi(x)),
+    lateTickets: lateRows.map(x => pickTicketForAi(x))
+  };
+}
+
+function pickTicketForAi(item) {
+  return {
+    id: item.id,
+    subject: item.subject,
+    type: item.type,
+    department: item.dept,
+    team: item.fai,
+    zone: item.zone,
+    community: item.comm,
+    receivedDate: item.date,
+    doneDate: item.done,
+    status: item.status,
+    days: item.days
+  };
+}
+
+function renderAiRank(id, rows, unit, useAverage) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = (rows || []).slice(0, 5).map((row, i) => {
+    const value = useAverage ? formatNumber(row.value, 1) : row.value;
+    const meta = useAverage ? `${row.count || 0} รายการ · เกินกำหนด ${row.late || 0}` : unit;
+    return `<div class="ai-rank">
+      <div class="ai-rank-n">${i + 1}</div>
+      <div class="ai-rank-body">
+        <div class="ai-rank-name">${escapeHtml(shortLabel(row.key, 30))}</div>
+        <div class="ai-rank-meta">${escapeHtml(meta)}</div>
+      </div>
+      <div class="ai-rank-val">${escapeHtml(value)}</div>
+    </div>`;
+  }).join('');
+}
+
+function addAiMessage(role, text) {
+  const log = document.getElementById('ai-chat-log');
+  if (!log) return;
+  const msg = document.createElement('div');
+  msg.className = 'ai-msg ' + (role === 'user' ? 'user' : 'bot');
+  msg.innerHTML = `
+    <div class="ai-avatar">${role === 'user' ? 'คุณ' : 'AI'}</div>
+    <div class="ai-bubble">${escapeHtml(text)}</div>`;
+  log.appendChild(msg);
+  log.scrollTop = log.scrollHeight;
+}
+
+function askAiQuick(question) {
+  const input = document.getElementById('ai-chat-input');
+  if (input) input.value = question;
+  sendAiMessage();
+}
+
+function handleAiInputKey(e) {
+  if (e.key === 'Enter') sendAiMessage();
+}
+
+function formatAiRank(rows, valueLabel, limit = 3, useAverage = false) {
+  return (rows || []).slice(0, limit).map((row, i) => {
+    const value = useAverage ? formatNumber(row.value, 1) : row.value;
+    return `${i + 1}. ${shortLabel(row.key, 36)} - ${value} ${valueLabel}`;
+  }).join('\n') || 'ยังไม่มีข้อมูลเพียงพอ';
+}
+
+function rowsForAiTopic(catList, keywordList) {
+  const cats = new Set(catList || []);
+  const keywords = keywordList || [];
+  return DATA.filter(item => {
+    const text = [item.subject, item.type, item.dept, item.fai, item.zone, item.comm].join(' ');
+    return cats.has(item.cat) || keywords.some(keyword => text.includes(keyword));
+  });
+}
+
+function answerTopicAnalysis(title, rows) {
+  const zoneRows = topItemsByCount(rows, x => x.zone, 5);
+  const teamRows = sortedEntries(groupBy(rows, x => x.fai), (key, items) => ({ key, value: items.length })).slice(0, 4);
+  const lateRows = rows.filter(isLateTicket).length;
+  const avg = avgDays(rows);
+  return `${title}\n\nจำนวนคำร้องที่เกี่ยวข้อง: ${rows.length} รายการ\nเวลาเฉลี่ยดำเนินการ: ${formatNumber(avg, 1)} วัน\nคำร้องที่เกินกำหนด/เสี่ยงล่าช้า: ${lateRows} รายการ\n\nพื้นที่ที่ควรติดตาม:\n${formatAiRank(zoneRows, 'รายการ', 5)}\n\nฝ่ายที่ควรประสาน:\n${formatAiRank(teamRows, 'รายการ', 4)}\n\nคำแนะนำ:\n- จัดลำดับพื้นที่ที่มีจำนวนคำร้องสูงและมีงานเกินกำหนดก่อน\n- ส่งต่อฝ่ายรับผิดชอบตามประเภทงาน และกำหนดผู้ติดตามสถานะรายวัน\n- หากพบคำร้องซ้ำในพื้นที่เดิม ควรจัดทำแผนแก้ไขเชิงป้องกันแทนการแก้รายครั้ง`;
+}
+
+function generateLocalAiAnswer(question, context) {
+  const q = String(question || '').toLowerCase();
+  const topZone = context.topZones[0];
+  const topType = context.topTypes[0];
+  const slowTeam = context.teamAverageDays[0];
+  const activeCount = context.summary.active;
+  const lateCount = context.summary.late;
+
+  if (q.includes('ไฟฟ้า') || q.includes('ไฟจราจร') || q.includes('โคมไฟ') || q.includes('หลอดไฟ')) {
+    return answerTopicAnalysis('วิเคราะห์คำร้องกลุ่มไฟฟ้า/ไฟจราจร', rowsForAiTopic(['pwr'], ['ไฟฟ้า', 'ไฟจราจร', 'โคมไฟ', 'หลอดไฟ', 'สายไฟ']));
+  }
+
+  if (q.includes('ท่อ') || q.includes('น้ำท่วม') || q.includes('ระบายน้ำ') || q.includes('น้ำเสีย')) {
+    return answerTopicAnalysis('วิเคราะห์คำร้องกลุ่มท่อระบายน้ำ/น้ำท่วม', rowsForAiTopic(['drain'], ['ท่อ', 'ระบายน้ำ', 'น้ำท่วม', 'น้ำเสีย', 'ฝาท่อ']));
+  }
+
+  if (q.includes('ขยะ') || q.includes('สิ่งปฏิกูล') || q.includes('มูลฝอย')) {
+    return answerTopicAnalysis('วิเคราะห์คำร้องกลุ่มขยะและสิ่งปฏิกูล', rowsForAiTopic(['other'], ['ขยะ', 'สิ่งปฏิกูล', 'มูลฝอย', 'กำจัดขยะ']));
+  }
+
+  if (q.includes('ต้นไม้') || q.includes('กิ่งไม้') || q.includes('ตัดกิ่ง')) {
+    return answerTopicAnalysis('วิเคราะห์คำร้องกลุ่มต้นไม้และตัดกิ่งไม้', rowsForAiTopic(['tree', 'road'], ['ต้นไม้', 'กิ่งไม้', 'ตัดกิ่ง', 'เกาะกลาง']));
+  }
+
+  if (q.includes('อาคาร') || q.includes('ก่อสร้าง') || q.includes('โครงสร้าง')) {
+    return answerTopicAnalysis('วิเคราะห์คำร้องกลุ่มอาคารและควบคุมการก่อสร้าง', rowsForAiTopic(['build', 'other'], ['อาคาร', 'ก่อสร้าง', 'โครงสร้าง', 'ควบคุมการก่อสร้าง']));
+  }
+
+  if (q.includes('ชุมชน') || q.includes('hotspot')) {
+    return `ชุมชน Hotspot ที่ควรติดตาม\n\n${formatAiRank(context.topCommunities, 'รายการ', 6)}\n\nคำแนะนำ:\n- เลือก 3-5 ชุมชนแรกเป็นพื้นที่เฝ้าระวังรายสัปดาห์\n- ตรวจประเภทคำร้องซ้ำในแต่ละชุมชน เพื่อจัดทีมแก้ไขเฉพาะปัญหา\n- หากชุมชนเดียวมีหลายประเภทปัญหา ควรลงพื้นที่แบบบูรณาการหลายฝ่าย`;
+  }
+
+  if (q.includes('sla') || q.includes('ทันเวลา') || q.includes('ตัวชี้วัด')) {
+    return `วิเคราะห์ SLA และประสิทธิภาพการปิดงาน\n\nSLA ภายใน 20 วัน: ${context.summary.slaWithin20DaysPercent}%\nเวลาเฉลี่ยดำเนินการ: ${context.summary.averageDays} วัน\nค่ากลางระยะเวลาดำเนินการ: ${context.summary.medianDays} วัน\nคำร้องเกินกำหนด: ${context.summary.late} รายการ\n\nคำแนะนำ:\n- ตรวจกลุ่มงานที่ใช้เวลาเฉลี่ยสูงและมีคำร้องเกินกำหนดก่อน\n- แยกงานที่ปิดได้เร็วออกจากงานที่ต้องใช้งบหรือประสานหลายหน่วยงาน\n- ตั้งรอบติดตามงานเกินกำหนดทุก 3 วันจนกว่า SLA จะดีขึ้น`;
+  }
+
+  if (q.includes('ไม่ระบุ')) {
+    const noZone = DATA.filter(x => !x.zone || x.zone.includes('ไม่ระบุ')).length;
+    const noComm = DATA.filter(x => !x.comm || x.comm.includes('ไม่ระบุ')).length;
+    return `วิเคราะห์ข้อมูลที่ไม่ระบุพื้นที่\n\nไม่ระบุเขต: ${noZone} รายการ\nไม่ระบุชุมชน: ${noComm} รายการ\n\nผลกระทบ:\n- การวิเคราะห์ Hotspot จะคลาดเคลื่อน\n- จัดลำดับพื้นที่เร่งด่วนได้ยาก\n- ประเมินภาระงานรายเขตไม่ครบถ้วน\n\nคำแนะนำ:\n- บังคับเลือกเขต/ชุมชนในฟอร์มรับคำร้อง\n- ตรวจคำร้องเก่าและเติมข้อมูลพื้นที่ย้อนหลัง\n- ใช้ข้อความรายละเอียดคำร้องช่วยเดาพื้นที่เบื้องต้นก่อนให้เจ้าหน้าที่ตรวจยืนยัน`;
+  }
+
+  if (q.includes('ส่วนงาน') || q.includes('หน่วยงาน') || q.includes('รับผิดชอบ') || q.includes('ฝ่าย')) {
+    return `สรุปส่วนงานและฝ่ายที่ควรติดตาม\n\nฝ่ายที่ใช้เวลาเฉลี่ยสูง:\n${formatAiRank(context.teamAverageDays, 'วันเฉลี่ย', 6, true)}\n\nส่วนงานที่ใช้เวลาเฉลี่ยสูง:\n${formatAiRank(context.departmentAverageDays, 'วันเฉลี่ย', 4, true)}\n\nคำแนะนำ:\n- ประเภทถนน/ไฟฟ้าให้ประสานส่วนการโยธาเป็นหลัก\n- ประเภทท่อ น้ำท่วม น้ำเสีย ให้ประสานส่วนช่างสุขาภิบาล\n- งานอาคาร/โครงสร้างให้ประสานส่วนควบคุมการก่อสร้างอาคารและผังเมือง\n- งานที่มีเวลาเฉลี่ยสูงควรตั้งรอบประชุมติดตามเฉพาะกิจ`;
+  }
+
+  if (q.includes('แผน') || q.includes('7 วัน') || q.includes('เจ็ดวัน')) {
+    return `แผนดำเนินการ 7 วันจากข้อมูลล่าสุด\n\nวันที่ 1: ดึงรายการเกินกำหนดและจัดลำดับตามพื้นที่สะสมสูงสุด\nวันที่ 2: แยกคำร้องตามประเภทหลัก ได้แก่ ถนน ไฟฟ้า ท่อระบายน้ำ และงานอาคาร\nวันที่ 3: มอบหมายฝ่ายรับผิดชอบพร้อมกำหนดผู้ติดตามแต่ละกลุ่ม\nวันที่ 4-5: ลงพื้นที่ Hotspot และปิดงานที่แก้ได้เร็ว\nวันที่ 6: สรุปงานที่ต้องใช้งบประมาณหรือประสานภายนอก\nวันที่ 7: รายงานผลต่อผู้บริหาร พร้อม KPI งานที่ปิดได้ งานค้าง และพื้นที่เสี่ยง\n\nพื้นที่เริ่มต้นที่ควรใช้ในแผน: ${topZone ? topZone.key : 'พื้นที่ที่มีคำร้องสะสมสูงสุด'}`;
+  }
+
+  if (q.includes('พื้นที่') || q.includes('เขต') || q.includes('สะสม') || q.includes('เร่งด่วน')) {
+    return `สรุปพื้นที่ที่ควรจัดลำดับความเร่งด่วน\n\n${formatAiRank(context.topZones, 'รายการ', 5)}\n\nคำแนะนำ:\n- ให้เริ่มจาก ${topZone ? topZone.key : 'พื้นที่ที่มีคำร้องสูงสุด'} เพราะมีจำนวนคำร้องสะสมสูงที่สุด\n- แยกคำร้องตามประเภทปัญหาในพื้นที่นั้น แล้วส่งต่อฝ่ายรับผิดชอบเฉพาะทาง\n- หากมีคำร้องเกินกำหนดร่วมด้วย ให้จัดเป็นกลุ่มเร่งด่วนและติดตามรายวัน\n\nสถานะรวมปัจจุบัน: กำลังดำเนินการ ${activeCount} รายการ และเกินกำหนด ${lateCount} รายการ`;
+  }
+
+  if (q.includes('ถนน') || q.includes('สะพาน') || q.includes('ประสาน')) {
+    const roadRows = DATA.filter(x => x.cat === 'road' || String(x.type || '').includes('ถนน') || String(x.subject || '').includes('ถนน'));
+    const roadZones = topItemsByCount(roadRows, x => x.zone, 5);
+    const roadTeams = sortedEntries(groupBy(roadRows, x => x.fai), (key, items) => ({ key, value: items.length })).slice(0, 3);
+    return `แนวทางสำหรับเรื่องร้องเรียนประเภทถนน\n\nพื้นที่ที่พบคำร้องถนนมาก:\n${formatAiRank(roadZones, 'รายการ', 5)}\n\nหน่วยงาน/ฝ่ายที่ควรประสาน:\n${formatAiRank(roadTeams, 'รายการ', 3)}\n\nคำแนะนำ:\n- ส่งเรื่องหลักไปยังส่วนการโยธา โดยเฉพาะฝ่ายที่รับผิดชอบงานสาธารณูปโภคหรือสวนสาธารณะตามลักษณะงาน\n- แยกงานซ่อมเร่งด่วนออกจากงานที่ต้องเข้าแผนงบประมาณ\n- ถ้าพบคำร้องซ้ำในพื้นที่เดิม ควรจัดตรวจสภาพพื้นที่จริงและรวมงานซ่อมเป็นชุดเดียว`;
+  }
+
+  if (q.includes('ล่าช้า') || q.includes('ค้าง') || q.includes('เกินกำหนด') || q.includes('ผิดปกติ')) {
+    return `สรุปงานล่าช้าและค้างนานผิดปกติ\n\nฝ่ายที่ใช้เวลาเฉลี่ยสูง:\n${formatAiRank(context.teamAverageDays, 'วันเฉลี่ย', 5, true)}\n\nคำร้องเกินกำหนด/เสี่ยงล่าช้า: ${lateCount} รายการ\n\nคำแนะนำ:\n- ตรวจคิวงานของ ${slowTeam ? slowTeam.key : 'ฝ่ายที่ใช้เวลาเฉลี่ยสูงสุด'} ก่อนเป็นอันดับแรก\n- แยกคำร้องที่เกิน 30 วันออกเป็นรายการติดตามพิเศษ\n- ให้หัวหน้าฝ่ายอัปเดตสถานะงานค้างทุกวันจนกว่าจำนวนงานเกินกำหนดจะลดลง`;
+  }
+
+  if (q.includes('รายงาน') || q.includes('ผู้บริหาร') || q.includes('สรุป')) {
+    return `สรุปรายงานสำหรับผู้บริหาร\n\n- คำร้องทั้งหมด: ${context.summary.total} รายการ\n- เสร็จสิ้น: ${context.summary.done} รายการ\n- กำลังดำเนินการ: ${context.summary.active} รายการ\n- เกินกำหนด: ${context.summary.late} รายการ\n- เวลาเฉลี่ยดำเนินการ: ${context.summary.averageDays} วัน\n- SLA ภายใน 20 วัน: ${context.summary.slaWithin20DaysPercent}%\n\nพื้นที่ที่ควรติดตาม:\n${formatAiRank(context.topZones, 'รายการ', 3)}\n\nประเภทปัญหาที่พบบ่อย:\n${formatAiRank(context.topTypes, 'รายการ', 3)}\n\nข้อเสนอแนะ: ควรเร่งปิดงานค้างในพื้นที่สะสมสูง และติดตามฝ่ายที่มีเวลาเฉลี่ยดำเนินการสูงผิดปกติเป็นรายสัปดาห์`;
+  }
+
+  return `จากข้อมูล Dashboard ปัจจุบัน พบประเด็นสำคัญดังนี้\n\n1. พื้นที่สะสมสูงสุด: ${topZone ? `${topZone.key} (${topZone.value} รายการ)` : 'ยังไม่มีข้อมูล'}\n2. ประเภทปัญหาที่พบบ่อยที่สุด: ${topType ? `${topType.key} (${topType.value} รายการ)` : 'ยังไม่มีข้อมูล'}\n3. ฝ่ายที่ใช้เวลาเฉลี่ยสูง: ${slowTeam ? `${slowTeam.key} (${formatNumber(slowTeam.value, 1)} วัน)` : 'ยังไม่มีข้อมูล'}\n4. งานที่ควรติดตาม: กำลังดำเนินการ ${activeCount} รายการ และเกินกำหนด ${lateCount} รายการ\n\nคำแนะนำ: ให้เริ่มจากพื้นที่ที่มีคำร้องสะสมสูงสุด ตรวจแยกประเภทปัญหา และมอบหมายฝ่ายที่เกี่ยวข้องพร้อมกำหนดรอบติดตามผลที่ชัดเจน`;
+}
+
+function renderAiChatbot() {
+  const page = document.getElementById('pg-chatbot');
+  if (!page) return;
+  const context = buildAiContext();
+  const metrics = document.getElementById('ai-metrics');
+  if (metrics) {
+    metrics.innerHTML = [
+      ['คำร้องทั้งหมด', context.summary.total, `เสร็จสิ้น ${context.summary.done}`],
+      ['กำลังดำเนินการ', context.summary.active, 'รอ/ติดตาม/กำลังแก้ไข'],
+      ['เกินกำหนด', context.summary.late, `เฉลี่ย ${context.summary.averageDays} วัน`],
+      ['SLA ทันเวลา', context.summary.slaWithin20DaysPercent + '%', 'ภายใน 20 วัน']
+    ].map(([label, value, sub]) => `
+      <div class="ai-mini">
+        <div class="ai-mini-lbl">${escapeHtml(label)}</div>
+        <div class="ai-mini-val">${escapeHtml(value)}</div>
+        <div class="ai-mini-sub">${escapeHtml(sub)}</div>
+      </div>`).join('');
+  }
+  renderAiRank('ai-zone-rank', context.topZones, 'รายการ');
+  renderAiRank('ai-type-rank', context.topTypes, 'รายการ');
+  renderAiRank('ai-fai-rank', context.teamAverageDays, 'วัน', true);
+  if (!aiChatReady) {
+    aiChatReady = true;
+    addAiMessage('bot', 'สวัสดีครับ ผมคือผู้ช่วยวิเคราะห์คำร้องเรียนของ KaenConnect\n\nระบบนี้เป็น Demo แบบ Local AI ไม่ต้องใช้ API และไม่ต้องเชื่อมต่อภายนอก ผมจะอ่านสถิติจาก Dashboard นี้ เช่น พื้นที่ที่มีคำร้องสะสม ประเภทปัญหา งานค้าง และฝ่ายที่ใช้เวลาเฉลี่ยสูง แล้วสรุปคำแนะนำให้ทันที\n\nลองกดคำถามลัดด้านบน หรือพิมพ์คำถามที่ต้องการได้เลย');
+  }
+}
+
+async function sendAiMessage() {
+  const input = document.getElementById('ai-chat-input');
+  const btn = document.getElementById('ai-send-btn');
+  const question = input ? input.value.trim() : '';
+  if (!question) {
+    toast('กรุณาพิมพ์คำถาม');
+    return;
+  }
+  addAiMessage('user', question);
+  input.value = '';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'กำลังวิเคราะห์';
+  }
+  try {
+    const answer = generateLocalAiAnswer(question, buildAiContext());
+    await new Promise(resolve => setTimeout(resolve, 220));
+    addAiMessage('bot', answer);
+  } catch (err) {
+    addAiMessage('bot', 'เกิดข้อผิดพลาดในการวิเคราะห์ข้อมูล\n\n' + (err && err.message ? err.message : String(err)));
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'ถาม AI';
+    }
+  }
+}
+
 function refreshAnalytics() {
   renderOverviewStats();
   renderMonthlyChartDynamic();
@@ -7887,6 +8243,7 @@ function refreshAnalytics() {
   renderPerformance();
   renderHeatmap();
   renderProactive();
+  if (document.getElementById('pg-chatbot')?.classList.contains('active')) renderAiChatbot();
 }
 
 // ─── TOAST ───
